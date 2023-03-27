@@ -43,36 +43,5 @@ fd_inside = mesh.Add(FaceDescriptor(bc=2,domin=2,domout=1,surfnr=2))
 add2DMesh(circlemesh, mesh, fd_outside)
 add2DMesh(rectmesh, mesh, fd_inside)
 
-num = 20
-shift = 10.0
-dirichlet = [1]
+Draw(ngsolve.Mesh(mesh))
 
-mesh = ngsolve.Mesh(rectmesh)
-a, b, fes = build_elasticity_system(mesh, steel, dirichlet, shift)
-u_rect = ngsolve.GridFunction(fes, multidim=num)
-
-lams = ngsolve.ArnoldiSolver(a.mat, b.mat, fes.FreeDofs(), list(u_rect.vecs), shift)
-
-cmesh = ngsolve.Mesh(circlemesh)
-fes = VectorH1(cmesh, order=1, complex=True)
-u, v = fes.TnT()
-
-# Wavenumber
-omega = 15
-#
-# Forms
-a = BilinearForm(fes)
-a += InnerProduct(grad(u), grad(v))*dx - omega**2*u*v*dx
-a += -omega*1j*u*v*ds("outer")
-a.Assemble()
-
-F = u_rect.MDComponent(0)
-
-f = LinearForm(fes)
-f += -omega*v*F*dx
-f.Assemble();
-
-gfu = GridFunction(fes, name="u")
-gfu.vec.data = a.mat.Inverse() * f.vec
-
-Draw(gfu)

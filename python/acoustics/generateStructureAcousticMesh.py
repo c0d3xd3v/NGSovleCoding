@@ -28,9 +28,9 @@ addDomain(mesh, solidMesh, fd_solid)
 addDomain(mesh, ambientSphereMesh, fd_outside)
 addDomain(mesh, pmlSphereMesh, fd_pml)
 
-#mesh.SetMaterial(2, "solid")
-#mesh.SetMaterial(1, "air")
-#mesh.SetMaterial(0, "pml")
+mesh.SetMaterial(3, "solid")
+mesh.SetMaterial(2, "air")
+mesh.SetMaterial(1, "pml")
 
 mesh.GenerateVolumeMesh()
 

@@ -7,7 +7,6 @@ solidMesh         = solidGeometry.GenerateMesh()
 solidMeshCenter   = computeMeshCenter(solidMesh)
 bndRadius         = meshBoundingRadius(solidMesh, solidMeshCenter)
 
-
 ambientSphere     = CSGeometry()
 ambientSphere.Add(Sphere(Pnt(solidMeshCenter), 2.5*bndRadius))
 ambientSphereMesh = ambientSphere.GenerateMesh()
@@ -33,5 +32,21 @@ mesh.SetMaterial(2, "air")
 mesh.SetMaterial(1, "pml")
 
 mesh.GenerateVolumeMesh()
+ngmesh = ngsolve.Mesh(mesh)
 
-Draw(ngsolve.Mesh(mesh))
+fes1 = H1(ngmesh, definedon="solid")
+u1 = GridFunction(fes1, "u1")
+u1.Set(-(x*x+y*y+z*z))
+
+fes2 = H1(ngmesh, definedon="air")
+u2 = GridFunction(fes2, "u2")
+u2.Set(0)
+
+fes3 = H1(ngmesh, definedon="pml")
+u3 = GridFunction(fes3, "u3")
+u3.Set(1)
+
+Draw(ngmesh)
+Draw(u1)
+Draw(u2)
+Draw(u3)

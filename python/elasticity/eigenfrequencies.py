@@ -46,29 +46,44 @@ def build_elasticity_system(_mesh, _material, _dirichlet, shift):
     _a.Assemble()
     _b.Assemble()
     return _a, _b, _fes
-# ######################################################################################################################
 
 
 # ######################################################################################################################
-argv: list[str] = sys.argv
-filepath = ""
-if len(argv) < 2:
-    filepath = os.environ.get("ES_ARGV")
-else:
-    filepath = argv[1]
+def build_elasticity_system_on_fes(_mesh, _material, _fes, shift):
+    #_fes: VectorH1 = VectorH1(_mesh, order=2, dirichlet=_dirichlet, complex=True)
+    _u, _v = _fes.TrialFunction(), _fes.TestFunction()
+    _a = ngsolve.BilinearForm(_fes)
+    _a += ngsolve.SymbolicBFI(2 * _material.mu
+                              * ngsolve.InnerProduct(1.0 / 2.0 * (ngsolve.grad(_u) + ngsolve.grad(_u).trans),
+                                                     1.0 / 2.0 * (ngsolve.grad(_v) + ngsolve.grad(_v).trans))
+                              + _material.lam * ngsolve.div(_u) * ngsolve.div(_v)
+                              + shift * _material.rho * _u * _v)
+    _b = ngsolve.BilinearForm(_fes)
+    _b += ngsolve.SymbolicBFI(_material.rho * _u * _v)
+    _a.Assemble()
+    _b.Assemble()
+    return _a, _b
+
 # ######################################################################################################################
+# argv: list[str] = sys.argv
+# filepath = ""
+# if len(argv) < 2:
+#     filepath = os.environ.get("ES_ARGV")
+# else:
+#     filepath = argv[1]
+# # ######################################################################################################################
 
 
-if '__main__' == __name__ and len(filepath) > 0:
-    mesh = ngsolve.Mesh(filepath)
-    num = 20
-    shift = 10.0
-    dirichlet = [0]
+# if '__main__' == __name__ and len(filepath) > 0:
+#     mesh = ngsolve.Mesh(filepath)
+#     num = 20
+#     shift = 10.0
+#     dirichlet = [0]
 
-    a, b, fes = build_elasticity_system(mesh, steel, dirichlet, shift)
-    u = ngsolve.GridFunction(fes, multidim=num)
-    lams = ngsolve.ArnoldiSolver(a.mat, b.mat, fes.FreeDofs(), u.vecs, shift)
+#     a, b, fes = build_elasticity_system(mesh, steel, dirichlet, shift)
+#     u = ngsolve.GridFunction(fes, multidim=num)
+#     lams = ngsolve.ArnoldiSolver(a.mat, b.mat, fes.FreeDofs(), u.vecs, shift)
 
-    ngsolve.Draw(u)
-else:
-    print("usage: \n\n set ES_ARGV=/relative/path/to/volume/mesh.vol && netgen eigenfrequencies.py")
+#     ngsolve.Draw(u)
+# else:
+#     print("usage: \n\n set ES_ARGV=/relative/path/to/volume/mesh.vol && netgen eigenfrequencies.py")

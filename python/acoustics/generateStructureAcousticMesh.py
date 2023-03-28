@@ -34,9 +34,9 @@ mesh.SetMaterial(1, "pml")
 mesh.GenerateVolumeMesh()
 ngmesh = ngsolve.Mesh(mesh)
 
-_fes: VectorH1 = VectorH1(ngmesh, definedon="solid", order=2, complex=True)
+_fes: VectorH1 = VectorH1(ngmesh, definedon="solid", dirichlet=[1], order=2, complex=True)
 a, b = build_elasticity_system_on_fes(ngmesh, steel, _fes, 10)
-u = ngsolve.GridFunction(_fes, multidim=50)
+u = ngsolve.GridFunction(_fes, multidim=20)
 lams = ngsolve.ArnoldiSolver(a.mat, b.mat, _fes.FreeDofs(), list(u.vecs), 10)
 
 fes2 = H1(ngmesh, definedon="air")

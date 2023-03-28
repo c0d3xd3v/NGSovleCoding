@@ -13,7 +13,7 @@ u, v = fes.TnT()
 
 # Wavenumber & source
 omega = 15
-# pulse = 5e4*exp(-(40**2)*((x-0.5)*(x-0.5) + (y-0.5)*(y-0.5)))
+pulse = 5e4*exp(-(40**2)*((x-0.5)*(x-0.5) + (y-0.5)*(y-0.5)))
 
 # Forms
 a = BilinearForm(fes)
@@ -22,7 +22,7 @@ a += -omega*1j*u*v * ds("outer")
 a.Assemble()
 
 f = LinearForm(fes)
-f += 1 * v * ds("scat")
+f += pulse * v * dx
 f.Assemble();
 
 count = 0

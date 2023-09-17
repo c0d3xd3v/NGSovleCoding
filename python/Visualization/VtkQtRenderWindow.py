@@ -1,7 +1,7 @@
 import sys
-from PySide2 import QtCore, QtWidgets
-from PySide2.QtGui import QIcon
-from PySide2.QtWidgets import QAction, QToolBar
+from PySide6 import QtCore, QtWidgets
+from PySide6.QtGui import QIcon, QAction
+from PySide6.QtWidgets import QToolBar
 from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 
 from Visualization.VtkModeshapeActor import *

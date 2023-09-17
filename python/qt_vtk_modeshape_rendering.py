@@ -5,6 +5,8 @@ from Visualization.VtkPressureFieldActor import *
 from Visualization.VtkModeshapeScene import *
 from Visualization.VtkQtRenderWindow import *
 
+import wildmeshing as wm
+
 if __name__ == "__main__":
      
     app = QtWidgets.QApplication(sys.argv)
@@ -23,7 +25,6 @@ if __name__ == "__main__":
     reader2.Update()
     pressureData = reader2.GetOutput()
     pd = pressureData.GetPointData()
-    print(pd.GetAttribute(1))
 
     modeshapeActor = VtkModeShapeActor()
     modeshapeActor.setDataset(modeshapeData)
@@ -47,4 +48,4 @@ if __name__ == "__main__":
     modeshapeScene.disableAnimate()
     modeshapeScene.disableClippingWidget()
 
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

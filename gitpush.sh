@@ -1,3 +1,3 @@
  #!/bin/bash
- #export set git_token=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
- git push https://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@github.com/c0d3xd3v/NGSovleCoding.git
+ #export set git_token=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
+ git push https://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@github.com/c0d3xd3v/NGSovleCoding.git

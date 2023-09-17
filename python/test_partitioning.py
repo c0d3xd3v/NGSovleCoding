@@ -7,7 +7,6 @@ from meshing.partitioning import *
 
 sv, sf = igl.read_triangle_mesh("../data/skull.msh__sf.obj")
 membership = spectralClustering(sf, 5)
-print(np.unique(membership))
 
 renderer = vtk.vtkRenderer()
 render_window = vtk.vtkRenderWindow()

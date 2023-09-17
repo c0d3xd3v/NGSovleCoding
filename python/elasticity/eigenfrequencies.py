@@ -49,7 +49,7 @@ def build_elasticity_system(_mesh, _material, _dirichlet, shift):
 
 
 # ######################################################################################################################
-def build_elasticity_system_on_fes(_mesh, _material, _fes, shift):
+def build_elasticity_system_on_fes(_material, _fes, shift):
     #_fes: VectorH1 = VectorH1(_mesh, order=2, dirichlet=_dirichlet, complex=True)
     _u, _v = _fes.TrialFunction(), _fes.TestFunction()
     _a = ngsolve.BilinearForm(_fes)
@@ -63,6 +63,17 @@ def build_elasticity_system_on_fes(_mesh, _material, _fes, shift):
     _a.Assemble()
     _b.Assemble()
     return _a, _b
+
+
+# ######################################################################################################################
+def solveElasticityEigenmodes(fes, num, shift, material):
+    #num = 20
+    #shift = 10.0
+    a, b = build_elasticity_system_on_fes(material, fes, shift)
+    u = ngsolve.GridFunction(fes, name="eigenmodes", multidim=num)
+    lams = ngsolve.ArnoldiSolver(a.mat, b.mat, fes.FreeDofs(), list(u.vecs), shift)
+    return u, lams
+
 
 # ######################################################################################################################
 # argv: list[str] = sys.argv

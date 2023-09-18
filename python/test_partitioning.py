@@ -5,8 +5,8 @@ from Visualization.vtkhelper import *
 from meshing.partitioning import *
 
 
-sv, sf = igl.read_triangle_mesh("../data/skull.msh__sf.obj")
-membership = spectralClustering(sf, 5)
+sv, sf = igl.read_triangle_mesh("../data/tw_tuningfork__tracked_surface.stl")
+membership = spectralClustering(sf, 4)
 
 renderer = vtk.vtkRenderer()
 render_window = vtk.vtkRenderWindow()

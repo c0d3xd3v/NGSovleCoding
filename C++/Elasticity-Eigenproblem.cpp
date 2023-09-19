@@ -4,6 +4,8 @@
 #include "eigensystemsolver.h"
 #include "solutionmapper.h"
 
+#include <vtk/QQuickVTKRenderItem.h>
+
 int main(int argc, char** argv)
 {    
     Material &material = steel;

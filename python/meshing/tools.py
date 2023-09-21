@@ -48,3 +48,29 @@ def addDomain(mesh, domainMesh, fd):
     for e in domainMesh.Elements2D():
         mesh.Add(Element2D(fd, [pmap[v] for v in e.vertices]))
     return mesh
+
+
+def addSurfaceFromLists(fds, mesh, points, tris):
+    pmap = {}
+    for i, p in enumerate(points):
+        mp = MeshPoint(Point3d(p[0], p[1], p[2]))
+        pmap[i] = mesh.Add(mp)
+
+    for i, tri in enumerate(tris):
+        T = Element2D(fds, [pmap[v] for v in tri])
+        mesh.Add(T)
+
+    return mesh
+
+
+def addVolumeFromLists(index, mesh, points, tets):
+    pmap = {}
+    for i, p in enumerate(points):
+        mp = MeshPoint(Point3d(p[0], p[1], p[2]))
+        pmap[i] = mesh.Add(mp)
+
+    for i, tet in enumerate(tets):
+        T = Element3D(index, [pmap[v] for v in tet])
+        mesh.Add(T)
+
+    return mesh

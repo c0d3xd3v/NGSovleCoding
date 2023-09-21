@@ -5,8 +5,8 @@ from Visualization.vtkhelper import *
 from meshing.partitioning import *
 
 
-sv, sf = igl.read_triangle_mesh("../data/tw_tuningfork__tracked_surface.stl")
-membership = spectralClustering(sf, 4)
+sv, sf = igl.read_triangle_mesh("/home/kai/Development/github/NGSovleCoding/data/tw/tw_Barracuda__tracked_surface.obj")
+membership = spectralClustering(sf, 5)
 
 renderer = vtk.vtkRenderer()
 render_window = vtk.vtkRenderWindow()

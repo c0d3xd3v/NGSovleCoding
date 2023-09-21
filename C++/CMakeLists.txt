@@ -15,7 +15,7 @@ find_package(NGSolve CONFIG REQUIRED
   HINTS $ENV{NETGENDIR}/.. 
 )
 
-find_package(Qt5 REQUIRED COMPONENTS Quick Core Gui Widgets Qml)
+find_package(Qt5 REQUIRED COMPONENTS Quick Gui)
 find_package(VTK REQUIRED COMPONENTS
     GUISupportQtQuick
     CommonColor
@@ -24,10 +24,6 @@ find_package(VTK REQUIRED COMPONENTS
     CommonTransforms
     FiltersCore
     FiltersGeneral
-    IOImage
-    ImagingCore
-    ImagingGeneral
-    ImagingMorphological
     InteractionStyle
     InteractionWidgets
     RenderingAnnotation
@@ -35,11 +31,13 @@ find_package(VTK REQUIRED COMPONENTS
     RenderingCore
     RenderingFreeType
     RenderingGL2PSOpenGL2
-    RenderingOpenGL2
-    cli11
-    jsoncpp)
+    RenderingOpenGL2)
+find_package(Eigen3)
 
 include_directories(src)
+include_directories(${EIGEN_INCLUDE_DIR})
+
+
 
 add_executable(Elasticity-Eigenproblem
     Elasticity-Eigenproblem.cpp
@@ -47,13 +45,20 @@ add_executable(Elasticity-Eigenproblem
     elasticitysystem.cpp
     eigensystemsolver.cpp
     solutionmapper.cpp
+    src/Meshing/IOUtils.cpp
+    src/Meshing/IOUtils.h
+    src/Meshing/MshLoader.cpp
+    src/Meshing/MshLoader.h
+    src/Meshing/MshSaver.cpp
+    src/Meshing/MshSaver.h
 )
 
 target_link_libraries(Elasticity-Eigenproblem
     ngcomp
     Qt5::Gui
     Qt5::Quick
-    ${VTK_LIBRARIES})
+    ${VTK_LIBRARIES}
+    Eigen3::Eigen)
 
 
 

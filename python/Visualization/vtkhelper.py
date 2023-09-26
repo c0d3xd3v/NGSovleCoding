@@ -159,7 +159,6 @@ def iglToVtkPolydata(sf, sv):
     # Fügen Sie die Punkte und Zellen zur PolyData hinzu
     triangle_polydata.SetPoints(points)
     triangle_polydata.SetPolys(cells)
-
     return triangle_polydata
 
 

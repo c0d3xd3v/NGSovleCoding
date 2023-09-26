@@ -33,6 +33,6 @@ points = tetmesh[0]
 tets = tetmesh[1]
 mesh = addVolumeFromLists(0, mesh, points, tets)
 
-mesh.Update()
-mesh.Save("/home/kai/Development/github/NGSovleCoding/data/tw/tw_tuningfork.vol")
+#mesh.Update()
+#mesh.Save("/home/kai/Development/github/NGSovleCoding/data/tw/tw_tuningfork.vol")
 tetra.save("/home/kai/Development/github/NGSovleCoding/data/tw/tw_tuningfork")

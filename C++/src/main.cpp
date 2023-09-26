@@ -1,51 +1,25 @@
-#include <QGuiApplication>
-#include <QQmlApplicationEngine>
-#include <QQuickWindow>
+#include <iostream>
+#include <fstream>
+#include <igl/readOBJ.h>
+#include "Ui/instantrendering.h"
 
-#include <vtk/vtkRenderWindow.h>
-#include <vtk/vtkRenderWindowInteractor.h>
-#include <vtk/vtkOrientationMarkerWidget.h>
-
-#include <vtk/QQuickVTKRenderItem.h>
-
-#include <Ui/vtkorientationindicator.h>
-
-int main(int argc, char *argv[])
+int main (int argc, char ** argv)
 {
-    QQuickVTKRenderWindow::setupGraphicsBackend();
-    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-    QGuiApplication app(argc, argv);
+    Eigen::MatrixXd nodes;
+    Eigen::MatrixXi tris;
+    std::string path = "/home/kai/Development/github/NGSovleCoding/data/skull2.obj";
 
-    QQmlApplicationEngine engine;
-    engine.addImportPath("/usr/lib/qml/");
-    engine.load(QUrl("qrc:main.qml"));
+    std::filebuf fb;
+    if(fb.open (path,std::ios::in))
+    {
+        std::istream is(&fb);
+        igl::readOBJ(path, nodes, tris);
+    }
 
-    QObject* topLevel = engine.rootObjects().value(0);
-    QQuickWindow* window = qobject_cast<QQuickWindow*>(topLevel);
-    window->show();
+    std::cout << "points : " << nodes.rows() << std::endl;
+    std::cout << "tris   : " << tris.rows() << std::endl;
 
-    QQuickVTKRenderItem* qquickvtkItem = topLevel->findChild<QQuickVTKRenderItem*>("ConeView");
-    vtkRenderWindowInteractor *iRen = qquickvtkItem->renderWindow()->renderWindow()->GetInteractor();
+    renderTriangleMesh(nodes, tris);
 
-    auto labels{"sal"};
-    vtkNew<vtkNamedColors> colors;
-    colors->SetColor("ParaViewBkg",
-       std::array<unsigned char, 4>{82, 87, 110, 255}.data());
-    auto axes = MakeCubeActor(labels, colors);
-    vtkNew<vtkOrientationMarkerWidget> om;
-    om->SetOrientationMarker(axes);
-    om->SetViewport(0, 0, 0.2, 0.2);
-    om->SetInteractor(iRen);
-    om->EnabledOn();
-
-    qquickvtkItem->renderer()->ResetCamera();
-    qquickvtkItem->renderer()->SetBackground(0.5, 0.5, 0.7);
-    qquickvtkItem->renderer()->SetBackground2(0.7, 0.7, 0.7);
-    qquickvtkItem->renderer()->SetGradientBackground(true);
-    qquickvtkItem->update();
-
-    if (engine.rootObjects().isEmpty())
-        return -1;
-
-    return app.exec();
+    return 0;
 }

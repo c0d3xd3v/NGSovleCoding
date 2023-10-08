@@ -6,11 +6,20 @@
 #include <vtk/vtkLookupTable.h>
 #include <vtk/vtkProperty.h>
 #include <vtk/vtkCell.h>
+#include <vtk/vtkNamedColors.h>
 
 #include "meshrendercontroller.h"
 
-MeshRenderController::MeshRenderController(Eigen::MatrixXd &nodes, Eigen::MatrixXi &tris)
+MeshRenderController::MeshRenderController(Eigen::MatrixXf &nodes, Eigen::MatrixXi &tris)
 {
+    points = vtkSmartPointer<vtkPoints>::New();
+    cells = vtkSmartPointer<vtkCellArray>::New();
+    mesh = vtkSmartPointer<vtkPolyData>::New();
+    triangleFilter = vtkSmartPointer<vtkTriangleFilter>::New();
+    polynormals = vtkSmartPointer<vtkPolyDataNormals>::New();
+    mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+    actor = vtkSmartPointer<vtkActor>::New();
+
     for(unsigned int i = 0; i < nodes.rows(); i++)
     {
         points->InsertNextPoint(
@@ -49,13 +58,20 @@ MeshRenderController::MeshRenderController(Eigen::MatrixXd &nodes, Eigen::Matrix
 
     meshGraph = nullptr;
     buildMeshGraph();
-
+/*
+    vtkNew<vtkNamedColors> colors;
+    // Color temp. 5400k.
+    colors->SetColor("HighNoonSun", 1.0, 1.0, .9843, 1.0);
+    // Color temp. 2850k.
+    colors->SetColor("100W Tungsten", 1.0, .8392, .6667, 1.0);
     actor->GetProperty()->SetSpecular(0.51);
     actor->GetProperty()->SetDiffuse(0.7);
     actor->GetProperty()->SetAmbient(0.7);
     actor->GetProperty()->SetSpecularPower(30.0);
     actor->GetProperty()->SetOpacity(1.0);
-
+    actor->GetProperty()->SetAmbientColor(
+        colors->GetColor3d("SaddleBrown").GetData());
+*/
     mapper->SetInputData(mesh);
     actor->SetMapper(mapper);
     //actor->GetProperty()->EdgeVisibilityOn();

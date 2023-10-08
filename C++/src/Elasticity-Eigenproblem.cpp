@@ -1,8 +1,8 @@
 #include <limits>
 
-#include "elasticitysystem.h"
-#include "eigensystemsolver.h"
-#include "solutionmapper.h"
+#include "pde/elasticitysystem.h"
+#include "pde/eigensystemsolver.h"
+#include "pde/solutionmapper.h"
 
 #include <vtk/QQuickVTKRenderItem.h>
 

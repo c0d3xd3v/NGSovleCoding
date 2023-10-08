@@ -27,11 +27,10 @@ ApplicationWindow {
         nameFilters: ["surface mesh files (*.stl *.obj)"]
         onAccepted: {
             console.log("You chose: " + fileDialog.fileUrls)
-            //Qt.quit()
+            vtkqtcontroller.loadFile(fileDialog.fileUrls);
         }
         onRejected: {
             console.log("Canceled")
-            //Qt.quit()
         }
     }
 
@@ -84,7 +83,6 @@ ApplicationWindow {
                         width:64
                         flat: false
                         text: qsTr("⋮")
-                        //onClicked: menu.open()
                     }
                 }
             }

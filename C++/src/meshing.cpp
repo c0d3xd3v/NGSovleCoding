@@ -6,7 +6,7 @@
 int main (int argc, char ** argv)
 {
     std::string path = "/home/kai/Development/github/NGSovleCoding/data/tw/tw_tuningfork_.msh";
-    Eigen::MatrixXd nodes;
+    Eigen::MatrixXf nodes;
     Eigen::MatrixXi tris;
     Eigen::MatrixXi tets;
     loadMSH(path, nodes, tris, tets);

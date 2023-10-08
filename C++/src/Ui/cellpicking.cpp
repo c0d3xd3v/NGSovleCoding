@@ -6,7 +6,7 @@
 
 vtkStandardNewMacro(MouseInteractorStyle)
 
-MouseInteractorStyle::MouseInteractorStyle()
+    MouseInteractorStyle::MouseInteractorStyle() : rc(nullptr)
 {
     //selectedMapper = vtkSmartPointer<vtkDataSetMapper>::New();
     //selectedActor = vtkSmartPointer<vtkActor>::New();
@@ -25,7 +25,8 @@ void MouseInteractorStyle::OnLeftButtonDown()
 
     if (picker->GetCellId() != -1)
     {
-        rc->selectCell(picker->GetCellId());
+        if(rc != nullptr)
+            rc->selectCell(picker->GetCellId());
     }
     // Forward events.
     vtkInteractorStyleTrackballCamera::OnLeftButtonDown();

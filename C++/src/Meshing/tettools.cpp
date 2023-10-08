@@ -18,51 +18,22 @@
                                                skip_simplify, coarsen);
 */
 
-void getSurfaceTriangles(Eigen::MatrixXd &nodes, Eigen::MatrixXi &tets, Eigen::MatrixXi &F2)
+void getSurfaceTriangles(Eigen::MatrixXf &nodes, Eigen::MatrixXi &tets, Eigen::MatrixXi &F2)
 {
     floatTetWild::Mesh ftMesh;
 
     for(unsigned int i = 0; i < nodes.rows(); i++)
-        ftMesh.tet_vertices.push_back(floatTetWild::MeshVertex(nodes.row(i)));
+        ftMesh.tet_vertices.push_back(floatTetWild::MeshVertex(nodes.row(i).cast<double>()));
 
     for(unsigned int i = 0; i < tets.rows(); i++)
         ftMesh.tets.push_back(floatTetWild::MeshTet(tets.row(i)));
 
     ftMesh.is_input_all_inserted = true;
 
-    //Eigen::MatrixXd *V = Eigen::internal::aligned_new<Eigen::MatrixXd>(1);
-    //Eigen::MatrixXi *F = Eigen::internal::aligned_new<Eigen::MatrixXi>(1);
-    //floatTetWild::manifold_surface(ftMesh, *V, *F);
     floatTetWild::get_boundary_surface_indices(ftMesh, F2);
-
-    /*
-    Eigen::VectorXi tags(V->rows());
-    tags.setZero(V->rows());
-    for(int i = 0; i < V->rows(); i++)
-    {
-        Eigen::Vector3d vi = V->row(i);
-        for(int j = 0; j < nodes.rows(); j++)
-        {
-            Eigen::Vector3d vj = nodes.row(j);
-            if((vi - vj).norm() < 0.000001)
-            {
-                tags(i) = j;
-                break;
-            }
-        }
-    }
-
-    F2.setZero(F->rows(), F->cols());
-    for(int i = 0; i < F->rows(); i++)
-        for(int j = 0; j < F->cols(); j++)
-            F2(i,j) = tags((*F)(i,j));
-    */
-
-    //Eigen::internal::aligned_free(V);
-    //Eigen::internal::aligned_free(F);
 }
 
-netgen::Mesh *generateNGMesh(Eigen::MatrixXd &nodes, Eigen::MatrixXi &tris, Eigen::MatrixXi &tets)
+netgen::Mesh *generateNGMesh(Eigen::MatrixXf &nodes, Eigen::MatrixXi &tris, Eigen::MatrixXi &tets)
 {
     netgen::Mesh *mesh = new netgen::Mesh();
 
@@ -102,10 +73,10 @@ netgen::Mesh *generateNGMesh(Eigen::MatrixXd &nodes, Eigen::MatrixXi &tris, Eige
     return mesh;
 }
 
-void loadMSH(string &path, Eigen::MatrixXd &nodes, Eigen::MatrixXi &tris, Eigen::MatrixXi &tets)
+void loadMSH(string &path, Eigen::MatrixXf &nodes, Eigen::MatrixXi &tris, Eigen::MatrixXi &tets)
 {
     PyMesh::MshLoader mshLoader(path);
-    nodes = Eigen::MatrixXd(mshLoader.get_nodes());
+    nodes = Eigen::MatrixXf(mshLoader.get_nodes().cast<float>());
     tets = Eigen::MatrixXi(mshLoader.get_elements());
 
     nodes.resize(3, nodes.rows()/3);

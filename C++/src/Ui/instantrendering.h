@@ -3,6 +3,6 @@
 
 #include <Eigen/Dense>
 
-int renderTriangleMesh(Eigen::MatrixXd &nodes, Eigen::MatrixXi &tris);
+int renderTriangleMesh(Eigen::MatrixXf &nodes, Eigen::MatrixXi &tris);
 
 #endif // INSTANTRENDERING_H

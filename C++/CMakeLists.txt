@@ -48,12 +48,15 @@ link_directories(${TETWILD_LIB_DIR})
 
 message("vtk libs : ${VTK_LIBRARIES}")
 
+set(SRC_PDE
+    src/pde/material.cpp
+    src/pde/elasticitysystem.cpp
+    src/pde/eigensystemsolver.cpp
+    src/pde/solutionmapper.cpp)
+
 add_executable(Elasticity-Eigenproblem
-    Elasticity-Eigenproblem.cpp
-    material.cpp
-    elasticitysystem.cpp
-    eigensystemsolver.cpp
-    solutionmapper.cpp
+    src/Elasticity-Eigenproblem.cpp
+    ${SRC_PDE}
     src/Meshing/IOUtils.cpp
     src/Meshing/IOUtils.h
     src/Meshing/MshLoader.cpp
@@ -72,7 +75,7 @@ target_link_libraries(Elasticity-Eigenproblem
 
 
 add_executable(meshing
-    meshing.cpp
+    src/meshing.cpp
     src/Ui/vtksceneeventprocessor.h
     src/Ui/vtksceneeventprocessor.cpp
     src/Ui/vtkorientationindicator.h

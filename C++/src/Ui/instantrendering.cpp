@@ -26,7 +26,7 @@
 #include "cellpicking.h"
 #include "colormaphelper.h"
 
-int renderTriangleMesh(Eigen::MatrixXd &nodes, Eigen::MatrixXi &tris)
+int renderTriangleMesh(Eigen::MatrixXf &nodes, Eigen::MatrixXi &tris)
 {
     QQuickVTKRenderWindow::setupGraphicsBackend();
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
@@ -44,7 +44,7 @@ int renderTriangleMesh(Eigen::MatrixXd &nodes, Eigen::MatrixXi &tris)
     QQuickVTKRenderItem* qquickvtkItem = topLevel->findChild<QQuickVTKRenderItem*>("ConeView");
     vtkRenderWindow *renderWindow = qquickvtkItem->renderWindow()->renderWindow();
     vtkRenderWindowInteractor *iRen = renderWindow->GetInteractor();
-    renderWindow->SetMultiSamples(16);
+    renderWindow->SetMultiSamples(8);
 /*
     vtkNew<vtkNamedColors> light_colors;
     // Color temp. 5400k.
@@ -56,20 +56,18 @@ int renderTriangleMesh(Eigen::MatrixXd &nodes, Eigen::MatrixXi &tris)
     light1->SetFocalPoint(0, 0, 0);
     light1->SetPosition(0, 1, 0.2);
     light1->SetColor(light_colors->GetColor3d("HighNoonSun").GetData());
-    light1->SetIntensity(0.8);
+    light1->SetIntensity(0.2);
     qquickvtkItem->renderer()->AddLight(light1);
 
     vtkNew<vtkLight> light2;
     light2->SetFocalPoint(0, 0, 0);
     light2->SetPosition(1.0, 1.0, 1.0);
     light2->SetColor(light_colors->GetColor3d("100W Tungsten").GetData());
-    light2->SetIntensity(0.7);
+    light2->SetIntensity(0.2);
     qquickvtkItem->renderer()->AddLight(light2);
 
     vtkNew<vtkShadowMapPass> shadows;
-
     vtkNew<vtkSequencePass> seq;
-
     vtkNew<vtkRenderPassCollection> passes;
     passes->AddItem(shadows->GetShadowMapBakerPass());
     passes->AddItem(shadows);
@@ -109,7 +107,6 @@ int renderTriangleMesh(Eigen::MatrixXd &nodes, Eigen::MatrixXi &tris)
     qquickvtkItem->renderer()->SetBackground2(0.7, 0.7, 0.7);
     qquickvtkItem->renderer()->SetGradientBackground(true);
     qquickvtkItem->update();
-
 
     int a = app.exec();
     return a;

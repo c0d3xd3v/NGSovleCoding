@@ -15,7 +15,7 @@ find_package(NGSolve CONFIG REQUIRED
   HINTS $ENV{NETGENDIR}/.. 
 )
 
-find_package(Qt5 REQUIRED COMPONENTS Quick Gui)
+find_package(Qt5 REQUIRED COMPONENTS Quick QuickControls2 Widgets Gui)
 find_package(VTK REQUIRED COMPONENTS
     GUISupportQtQuick
     CommonColor
@@ -66,6 +66,7 @@ target_link_libraries(Elasticity-Eigenproblem
     ngcomp
     Qt5::Gui
     Qt5::Quick
+    Qt5::Widgets
     ${VTK_LIBRARIES}
     Eigen3::Eigen)
 
@@ -78,8 +79,8 @@ add_executable(meshing
     src/Ui/vtkorientationindicator.cpp
     src/Ui/instantrendering.h
     src/Ui/instantrendering.cpp
-    src/Ui/rendercontroller.h
-    src/Ui/rendercontroller.cpp
+    src/Ui/meshrendercontroller.h
+    src/Ui/meshrendercontroller.cpp
     src/Ui/cellpicking.h
     src/Ui/cellpicking.cpp
     src/Ui/resources.qrc
@@ -95,11 +96,15 @@ add_executable(meshing
     src/tinyxml2/tinyxml2.h
     src/Ui/colormaphelper.h
     src/Ui/colormaphelper.cpp
+    src/Meshing/graph.h
+    src/Meshing/graph.cpp
 )
 
 target_link_libraries(meshing
     Qt5::Gui
     Qt5::Quick
+    Qt5::Widgets
+    Qt5::QuickControls2
     ${VTK_LIBRARIES}
     Eigen3::Eigen
     igl::igl_core
@@ -114,7 +119,8 @@ target_link_libraries(meshing
     IndirectPredicates
 )
 
-add_executable(qvtktest src/main.cpp
+add_executable(qvtktest
+    src/main.cpp
     src/Ui/main.qml
     src/Ui/vtksceneeventprocessor.h
     src/Ui/vtksceneeventprocessor.cpp
@@ -122,27 +128,27 @@ add_executable(qvtktest src/main.cpp
     src/Ui/vtkorientationindicator.cpp
     src/Ui/instantrendering.h
     src/Ui/instantrendering.cpp
-    src/Ui/rendercontroller.h
-    src/Ui/rendercontroller.cpp
+    src/Ui/meshrendercontroller.h
+    src/Ui/meshrendercontroller.cpp
     src/tinyxml2/tinyxml2.cpp
     src/tinyxml2/tinyxml2.h
     src/Ui/colormaphelper.h
     src/Ui/colormaphelper.cpp
     src/Ui/cellpicking.h
     src/Ui/cellpicking.cpp
-    src/Ui/resources.qrc)
+    src/Meshing/graph.h
+    src/Meshing/graph.cpp
+    src/Ui/resources.qrc
+    src/Ui/vtkqtcontroller.h
+    src/Ui/vtkqtcontroller.cpp
+
+)
 
 target_link_libraries(qvtktest
     Qt5::Gui
     Qt5::Quick
+    Qt5::Widgets
+    Qt5::QuickControls2
     ${VTK_LIBRARIES}
     Eigen3::Eigen
     igl::igl_core)
-
-
-
-
-
-
-
-

@@ -4,7 +4,7 @@ import wildmeshing as wm
 
 from meshing.tools import *
 
-path = "/home/kai/Development/github/NGSovleCoding/data/tuningfork.stl"
+path = "/home/kai/Development/github/NGSovleCoding/data/creaform-step1.obj"
 tetra = wm.Tetrahedralizer(
     skip_simplify=False, 
     coarsen=False,
@@ -35,4 +35,8 @@ mesh = addVolumeFromLists(0, mesh, points, tets)
 
 #mesh.Update()
 #mesh.Save("/home/kai/Development/github/NGSovleCoding/data/tw/tw_tuningfork.vol")
-tetra.save("/home/kai/Development/github/NGSovleCoding/data/tw/tw_tuningfork")
+tetra.save("/home/kai/Development/github/NGSovleCoding/data/tw/tw_tuningfork",
+            floodfill=True, manifold_surface=True, 
+            use_input_for_wn=True, 
+            correct_surface_orientation=True,
+            all_mesh=False)

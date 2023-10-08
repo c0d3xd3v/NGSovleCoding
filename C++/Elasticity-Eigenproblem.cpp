@@ -10,9 +10,9 @@ int main(int argc, char** argv)
 {    
     Material &material = steel;
     const double precision = 1.0e-10;
-    Array<double> dirbnd = {4, 27, 9, 21, 28, 1, 33, 205, 277, 192, 3, 5, 18, 328, 188};
+    Array<double> dirbnd;
     std::shared_ptr<MeshAccess> ma = make_shared<MeshAccess>(
-                "../../rahmen.vol.gz");
+                "test.vol");
 /*
     Flags surf_flags;
     std::shared_ptr<HDivHighOrderSurfaceFESpace> surf_fes =
@@ -27,6 +27,12 @@ int main(int argc, char** argv)
                           elasticityFes.getShift());
 
     Array<shared_ptr<BaseVector>> &evecs = ess.getEvecs();
+    for(int j = 0; j < evecs.Size(); j++)
+    {
+        float tmp = std::abs(evecs[0]->FV<std::complex<double> >()[j]);
+        std::cout << tmp << std::endl;
+    }
+    /*
     Array<float> mean;
     shared_ptr<BaseVector> mean_vec = CreateBaseVector(evecs[0]->Size(), true, 1);
     mean.SetSize(evecs[0]->Size());
@@ -66,6 +72,6 @@ int main(int argc, char** argv)
 
     //mean_vec->Print(std::cout);
     std::cout << " - > " << mean_vec->Size() << ", " << evecs[0]->Size() << std::endl;
-
+    */
     return 0;
 }

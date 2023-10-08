@@ -8,13 +8,21 @@
 #include <QQuickWindow>
 
 #include <vtk/vtkRenderWindow.h>
+#include <vtk/vtkLight.h>
+#include <vtk/vtkOpenGLRenderer.h>
 #include <vtk/QQuickVTKRenderItem.h>
 #include <vtk/vtkRenderWindowInteractor.h>
 #include <vtk/vtkOrientationMarkerWidget.h>
+#include <vtk/vtkCamera.h>
+#include <vtk/vtkSequencePass.h>
+#include <vtk/vtkCameraPass.h>
+#include <vtk/vtkShadowMapBakerPass.h>
+#include <vtk/vtkShadowMapPass.h>
+#include <vtk/vtkRenderPassCollection.h>
 
 #include "vtkorientationindicator.h"
 #include "instantrendering.h"
-#include "rendercontroller.h"
+#include "meshrendercontroller.h"
 #include "cellpicking.h"
 #include "colormaphelper.h"
 
@@ -27,7 +35,7 @@ int renderTriangleMesh(Eigen::MatrixXd &nodes, Eigen::MatrixXi &tris)
     QGuiApplication app(argc, argv);
     QQmlApplicationEngine engine;
     engine.addImportPath("/usr/lib/qml/");
-    engine.load(QUrl("qrc:main.qml"));
+    engine.load(QUrl("qrc:InstantRendering.qml"));
 
     QObject* topLevel = engine.rootObjects().value(0);
     QQuickWindow* window = qobject_cast<QQuickWindow*>(topLevel);
@@ -37,7 +45,42 @@ int renderTriangleMesh(Eigen::MatrixXd &nodes, Eigen::MatrixXi &tris)
     vtkRenderWindow *renderWindow = qquickvtkItem->renderWindow()->renderWindow();
     vtkRenderWindowInteractor *iRen = renderWindow->GetInteractor();
     renderWindow->SetMultiSamples(16);
+/*
+    vtkNew<vtkNamedColors> light_colors;
+    // Color temp. 5400k.
+    light_colors->SetColor("HighNoonSun", 1.0, 1.0, .9843, 1.0);
+    // Color temp. 2850k.
+    light_colors->SetColor("100W Tungsten", 1.0, .8392, .6667, 1.0);
 
+    vtkNew<vtkLight> light1;
+    light1->SetFocalPoint(0, 0, 0);
+    light1->SetPosition(0, 1, 0.2);
+    light1->SetColor(light_colors->GetColor3d("HighNoonSun").GetData());
+    light1->SetIntensity(0.8);
+    qquickvtkItem->renderer()->AddLight(light1);
+
+    vtkNew<vtkLight> light2;
+    light2->SetFocalPoint(0, 0, 0);
+    light2->SetPosition(1.0, 1.0, 1.0);
+    light2->SetColor(light_colors->GetColor3d("100W Tungsten").GetData());
+    light2->SetIntensity(0.7);
+    qquickvtkItem->renderer()->AddLight(light2);
+
+    vtkNew<vtkShadowMapPass> shadows;
+
+    vtkNew<vtkSequencePass> seq;
+
+    vtkNew<vtkRenderPassCollection> passes;
+    passes->AddItem(shadows->GetShadowMapBakerPass());
+    passes->AddItem(shadows);
+    seq->SetPasses(passes);
+
+    vtkNew<vtkCameraPass> cameraP;
+    cameraP->SetDelegatePass(seq);
+
+    vtkOpenGLRenderer* glr = dynamic_cast<vtkOpenGLRenderer*>(qquickvtkItem->renderer());
+    glr->SetPass(cameraP);
+*/
     auto labels{"sal"};
     vtkNew<vtkNamedColors> colors;
     colors->SetColor("ParaViewBkg",
@@ -51,7 +94,7 @@ int renderTriangleMesh(Eigen::MatrixXd &nodes, Eigen::MatrixXi &tris)
 
     //ColorMap cm = loadColorMapFromXML("color_theme.xml");
     ColorMap cm = loadIdColorMap(0, 6000);
-    RenderController rc(nodes, tris);
+    MeshRenderController rc(nodes, tris);
     rc.setColormap(cm);
 
     // Set the custom stype to use for interaction.

@@ -30,10 +30,12 @@ void getSurfaceTriangles(Eigen::MatrixXd &nodes, Eigen::MatrixXi &tets, Eigen::M
 
     ftMesh.is_input_all_inserted = true;
 
-    Eigen::MatrixXd *V = Eigen::internal::aligned_new<Eigen::MatrixXd>(1);
-    Eigen::MatrixXi *F = Eigen::internal::aligned_new<Eigen::MatrixXi>(1);
-    floatTetWild::manifold_surface(ftMesh, *V, *F);
+    //Eigen::MatrixXd *V = Eigen::internal::aligned_new<Eigen::MatrixXd>(1);
+    //Eigen::MatrixXi *F = Eigen::internal::aligned_new<Eigen::MatrixXi>(1);
+    //floatTetWild::manifold_surface(ftMesh, *V, *F);
+    floatTetWild::get_boundary_surface_indices(ftMesh, F2);
 
+    /*
     Eigen::VectorXi tags(V->rows());
     tags.setZero(V->rows());
     for(int i = 0; i < V->rows(); i++)
@@ -54,9 +56,10 @@ void getSurfaceTriangles(Eigen::MatrixXd &nodes, Eigen::MatrixXi &tets, Eigen::M
     for(int i = 0; i < F->rows(); i++)
         for(int j = 0; j < F->cols(); j++)
             F2(i,j) = tags((*F)(i,j));
+    */
 
-    Eigen::internal::aligned_free(V);
-    Eigen::internal::aligned_free(F);
+    //Eigen::internal::aligned_free(V);
+    //Eigen::internal::aligned_free(F);
 }
 
 netgen::Mesh *generateNGMesh(Eigen::MatrixXd &nodes, Eigen::MatrixXi &tris, Eigen::MatrixXi &tets)
@@ -72,7 +75,7 @@ netgen::Mesh *generateNGMesh(Eigen::MatrixXd &nodes, Eigen::MatrixXi &tris, Eige
         mesh->AddPoint(p);
     }
 
-    netgen::FaceDescriptor fd(0, 0, 1, 0);
+    netgen::FaceDescriptor fd(1, 0, 1, 0);
     int si = mesh->AddFaceDescriptor(fd);
 
     for(unsigned int i = 0; i < tris.rows(); i++)

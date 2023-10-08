@@ -1,4 +1,4 @@
-import vtkmodules.all as vtk 
+import vtkmodules.all as vtk
 
 from Visualization.VtkModeshapeActor import *
 from Visualization.VtkPressureFieldActor import *
@@ -8,9 +8,9 @@ from Visualization.VtkQtRenderWindow import *
 import wildmeshing as wm
 
 if __name__ == "__main__":
-     
+
     app = QtWidgets.QApplication(sys.argv)
- 
+
     window = MainWindow()
     renderWindow = window.GetRenderWindow()
     interactor = window.GetInteractor()

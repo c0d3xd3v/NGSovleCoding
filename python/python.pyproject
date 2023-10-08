@@ -1,0 +1,28 @@
+{
+    "files": [
+        "VibroAcoustic.py",
+        "Visualization/VtkModeshapeActor.py",
+        "Visualization/VtkModeshapeScene.py",
+        "Visualization/VtkPressureFieldActor.py",
+        "Visualization/VtkQtRenderWindow.py",
+        "Visualization/VtkRenderWindow.py",
+        "Visualization/vtkhelper.py",
+        "acoustic/boundarysourcesolver.py",
+        "elasticity/eigenfrequencies.py",
+        "main.py",
+        "meshing/group_by_normal.py",
+        "meshing/partitioning.py",
+        "meshing/test2d.py",
+        "meshing/tools.py",
+        "pde/helmholtz.py",
+        "pde/poission.py",
+        "qt_vtk_modeshape_rendering.py",
+        "solve_vibro_acoustic_tf.py",
+        "spectral_clustering_test.py",
+        "test_convert_msh_to_vol.py",
+        "test_partitioning.py",
+        "test_tetwild.py",
+        "vibroacoustic2d.py",
+        "vtk_modeshape_rendering.py"
+    ]
+}

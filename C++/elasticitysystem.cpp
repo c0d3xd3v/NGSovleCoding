@@ -10,7 +10,7 @@ ElasticityFESetup::ElasticityFESetup(
     Flags flags_fes;
     flags_fes.SetFlag("order", 2);
     flags_fes.SetFlag("complex", true);
-    flags_fes.SetFlag("dirichlet", dirbnd);
+    //flags_fes.SetFlag("dirichlet", dirbnd);
 
     fes = make_shared<VectorH1FESpace>(ma, flags_fes);
     fes->Update();

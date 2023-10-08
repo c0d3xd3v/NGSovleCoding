@@ -1,25 +1,42 @@
-#include <iostream>
-#include <fstream>
-#include <igl/readOBJ.h>
-#include "Ui/instantrendering.h"
+#include <QGuiApplication>
+#include <QQmlApplicationEngine>
+#include <QQuickWindow>
+#include <QQmlContext>
+#include <QQuickStyle>
+
+#include <vtk/vtkRenderWindow.h>
+#include <vtk/QQuickVTKRenderItem.h>
+#include <vtk/vtkRenderWindowInteractor.h>
+
+#include "Ui/vtkqtcontroller.h"
+#include "Ui/meshrendercontroller.h"
 
 int main (int argc, char ** argv)
 {
-    Eigen::MatrixXd nodes;
-    Eigen::MatrixXi tris;
-    std::string path = "/home/kai/Development/github/NGSovleCoding/data/skull2.obj";
+    QQuickVTKRenderWindow::setupGraphicsBackend();
+    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QQuickStyle::setStyle("Fusion");
 
-    std::filebuf fb;
-    if(fb.open (path,std::ios::in))
-    {
-        std::istream is(&fb);
-        igl::readOBJ(path, nodes, tris);
-    }
+    QGuiApplication app(argc, argv);
 
-    std::cout << "points : " << nodes.rows() << std::endl;
-    std::cout << "tris   : " << tris.rows() << std::endl;
+    VtkQtController vtkqtcontroller;
+    QQmlApplicationEngine engine;
+    engine.addImportPath("/usr/lib/qml/");
+    engine.rootContext()->setContextProperty("vtkqtcontroller", &vtkqtcontroller);
+    engine.load(QUrl("qrc:main.qml"));
 
-    renderTriangleMesh(nodes, tris);
+    QObject* topLevel = engine.rootObjects().value(0);
+    QQuickWindow* window = qobject_cast<QQuickWindow*>(topLevel);
+    window->show();
 
-    return 0;
+    QQuickVTKRenderItem* qquickvtkItem = topLevel->findChild<QQuickVTKRenderItem*>("ConeView");
+    vtkRenderWindow *renderWindow = qquickvtkItem->renderWindow()->renderWindow();
+    vtkRenderWindowInteractor *iRen = renderWindow->GetInteractor();
+    vtkRenderer *renderer = qquickvtkItem->renderer();
+
+    vtkqtcontroller.init(qquickvtkItem, renderer, renderWindow, iRen);
+
+    qquickvtkItem->update();
+
+    return app.exec();
 }

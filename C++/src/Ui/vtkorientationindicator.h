@@ -6,14 +6,14 @@
 #include <vtk/vtkPropAssembly.h>
 #include <vtk/vtkAnnotatedCubeActor.h>
 
-vtkNew<vtkAxesActor> MakeAxesActor(std::array<double, 3>& scale,
+vtkSmartPointer<vtkAxesActor> MakeAxesActor(std::array<double, 3>& scale,
                                    std::array<std::string, 3> const& xyzLabels);
 
-vtkNew<vtkAnnotatedCubeActor>
+vtkSmartPointer<vtkAnnotatedCubeActor>
 MakeAnnotatedCubeActor(std::array<std::string, 6> const& cubeLabels,
                        vtkNamedColors* colors);
 
-vtkNew<vtkPropAssembly> MakeCubeActor(std::string const& labelSelector,
+vtkSmartPointer<vtkPropAssembly> MakeCubeActor(std::string const& labelSelector,
                                       vtkNamedColors* colors);
 
 

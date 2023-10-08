@@ -8,7 +8,7 @@
 #include <vtk/vtkCaptionActor2D.h>
 
 
-vtkNew<vtkAxesActor> MakeAxesActor(std::array<double, 3>& scale,
+vtkSmartPointer<vtkAxesActor> MakeAxesActor(std::array<double, 3>& scale,
                                    std::array<std::string, 3> const& xyzLabels)
 {
     vtkNew<vtkAxesActor> axes;
@@ -30,7 +30,7 @@ vtkNew<vtkAxesActor> MakeAxesActor(std::array<double, 3>& scale,
     return axes;
 }
 
-vtkNew<vtkAnnotatedCubeActor>
+vtkSmartPointer<vtkAnnotatedCubeActor>
 MakeAnnotatedCubeActor(std::array<std::string, 6> const& cubeLabels,
                        vtkNamedColors* colors)
 {
@@ -64,7 +64,7 @@ MakeAnnotatedCubeActor(std::array<std::string, 6> const& cubeLabels,
     return cube;
 }
 
-vtkNew<vtkPropAssembly> MakeCubeActor(std::string const& labelSelector,
+vtkSmartPointer<vtkPropAssembly> MakeCubeActor(std::string const& labelSelector,
                                       vtkNamedColors* colors)
 {
     std::array<std::string, 3> xyzLabels;

@@ -2,5 +2,7 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>color_theme.xml</file>
+        <file>icons/openfile.svg</file>
+        <file>InstantRendering.qml</file>
     </qresource>
 </RCC>

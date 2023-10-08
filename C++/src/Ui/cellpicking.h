@@ -12,7 +12,7 @@
 #include <vtk/vtkCellPicker.h>
 #include <vtk/vtkExtractSelection.h>
 
-#include "rendercontroller.h"
+#include "meshrendercontroller.h"
 
 class MouseInteractorStyle : public vtkInteractorStyleTrackballCamera
 {
@@ -24,7 +24,7 @@ public:
     virtual void OnLeftButtonDown() override;
 
     vtkSmartPointer<vtkPolyData> Data;
-    RenderController *rc;
+    MeshRenderController *rc;
     //vtkSmartPointer<vtkDataSetMapper> selectedMapper;
     //vtkSmartPointer<vtkActor> selectedActor;
 };

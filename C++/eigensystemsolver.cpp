@@ -11,7 +11,7 @@ EigenSystemSolver::EigenSystemSolver(
     es.SetPrecision(precision);
     es.Calc();
     es.PrintEigenValues(std::cout);
-    int num = 20;//es.NumEigenValues();
+    int num = 2;//es.NumEigenValues();
     std::cout << "NumEigenValues : " << num << std::endl;
     lam = Array<Complex>(num);
     evecs = Array<shared_ptr<BaseVector>>(num);

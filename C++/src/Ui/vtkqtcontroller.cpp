@@ -14,7 +14,7 @@ VtkQtController::VtkQtController(QObject *parent)
     interactor = nullptr;
     om = nullptr;
     qquickvtkItem = nullptr;
-    meshRenderController = nullptr;
+    //meshRenderController = nullptr;
     selectionStyle = nullptr;
 }
 
@@ -84,12 +84,13 @@ void VtkQtController::resize(int width, int height)
     }
 }
 
-void VtkQtController::loadFile(QString filepath)
+QString VtkQtController::loadFile(QString filepath)
 {
+    QString hashString;
     const QUrl url(filepath);
-    if (url.isLocalFile()) {
+    if (url.isLocalFile())
+    {
         std::string path = url.path().toStdString();
-        qDebug() << path.c_str();
 
         const std::string oldLocale = std::setlocale(LC_NUMERIC, nullptr);
         std::setlocale(LC_NUMERIC, "C");
@@ -98,21 +99,42 @@ void VtkQtController::loadFile(QString filepath)
         Eigen::MatrixXi F;
         if(igl::read_triangle_mesh(path, V, F))
         {
-            std::stringstream ss;
-            ss << V;
-            qDebug() << "triangles : " << F.rows();
-            qDebug() << "vertices  : " << V.rows();
+            /*
             if(meshRenderController != nullptr)
             {
                 renderer->RemoveActor(meshRenderController->getActor());
                 delete meshRenderController;
             }
-            meshRenderController = new MeshRenderController(V, F);
-            selectionStyle->rc = meshRenderController;
-            renderer->AddActor(meshRenderController->getActor());
+            */
+            MeshRenderController* mc = new MeshRenderController(V, F);
+
+            std::stringstream ss;
+            ss << mc->getActor();
+
+            typedef std::pair<std::string, MeshRenderController*> pair;
+            meshRenderController.insert(pair(ss.str(), mc));
+
+            hashString = ss.str().c_str();
+
+            renderer->AddActor(mc->getActor());
             renderer->ResetCamera();
         }
 
         std::setlocale(LC_NUMERIC, oldLocale.c_str());
+    }
+
+    return hashString;
+}
+
+void VtkQtController::removeObject(QString hashString)
+{
+    typedef std::map<std::string, MeshRenderController*>::iterator Iterator;
+    Iterator itr = meshRenderController.find(hashString.toStdString());
+    if(itr != meshRenderController.end())
+    {
+        qDebug() << "Delete " << itr->first.c_str();
+        renderer->RemoveActor(itr->second->getActor());
+        delete itr->second;
+        meshRenderController.erase(itr);
     }
 }

@@ -1,6 +1,9 @@
 #ifndef VTKQTCONTROLLER_H
 #define VTKQTCONTROLLER_H
 
+#include <map>
+#include <tuple>
+
 #include <QObject>
 
 #include <vtk/vtkRenderer.h>
@@ -24,7 +27,8 @@ private:
     vtkRenderWindow *renderWindow;
     vtkRenderWindowInteractor *interactor;
     vtkSmartPointer<vtkOrientationMarkerWidget> om;
-    MeshRenderController *meshRenderController;
+    std::map<std::string, MeshRenderController *> meshRenderController;
+
 public:
     explicit VtkQtController(QObject *parent = nullptr);
     void init(QQuickVTKRenderItem* qquickvtkItem,
@@ -34,7 +38,8 @@ public:
 
 public slots:
     void resize(int width, int height);
-    void loadFile(QString filepath);
+    QString loadFile(QString filepath);
+    void removeObject(QString hashString);
 
 signals:
 

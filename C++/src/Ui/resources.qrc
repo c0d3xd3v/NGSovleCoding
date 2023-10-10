@@ -4,5 +4,9 @@
         <file>color_theme.xml</file>
         <file>icons/openfile.svg</file>
         <file>InstantRendering.qml</file>
+        <file>MeshPane.qml</file>
+        <file>MainToolbar.qml</file>
+        <file>icons/arrow_back.svg</file>
+        <file>icons/close.svg</file>
     </qresource>
 </RCC>

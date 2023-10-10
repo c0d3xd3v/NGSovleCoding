@@ -22,6 +22,7 @@ int main (int argc, char ** argv)
     VtkQtController vtkqtcontroller;
     QQmlApplicationEngine engine;
     engine.addImportPath("/usr/lib/qml/");
+
     engine.rootContext()->setContextProperty("vtkqtcontroller", &vtkqtcontroller);
     engine.load(QUrl("qrc:main.qml"));
 

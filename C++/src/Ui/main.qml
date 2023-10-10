@@ -4,21 +4,20 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.3
 import QtQuick.Window 2.15
 import QtQuick.Dialogs 1.3
-import Qt.labs.settings 1.0
 
-// import the VTK module
 import VTK 9.2
+
+import "qrc:"
 
 // window containing the application
 ApplicationWindow {
     // title of the application
     title: qsTr("VTK QtQuick App")
-    width: 600
-    height: 400
+    width: 800
+    height: 550
     visible: true
     id: window
     readonly property bool inPortrait: window.width < 750
-
 
     FileDialog {
         id: fileDialog
@@ -27,11 +26,18 @@ ApplicationWindow {
         nameFilters: ["surface mesh files (*.stl *.obj)"]
         onAccepted: {
             console.log("You chose: " + fileDialog.fileUrls)
-            vtkqtcontroller.loadFile(fileDialog.fileUrls);
+            var hashString = vtkqtcontroller.loadFile(fileDialog.fileUrls);
+            var comp = Qt.createComponent("MeshPane.qml");
+            var obj = comp.createObject(meshListPane, {hashString: hashString});
+            obj.deleteMesh.connect(deleteMesh)
         }
-        onRejected: {
-            console.log("Canceled")
-        }
+    }
+
+    function deleteMesh(hashString, pane)
+    {
+        //console.log("delete mesh " + hashString)
+        vtkqtcontroller.removeObject(hashString)
+        pane.destroy()
     }
 
     onBeforeRendering: {
@@ -42,7 +48,7 @@ ApplicationWindow {
         id: drawer
         width: 250
         height: parent.height
-
+        padding: 0
         modal: inPortrait
         interactive: inPortrait
         position: inPortrait ? 0 : 1
@@ -50,67 +56,28 @@ ApplicationWindow {
         clip: true
 
         Pane {
+            id: sidePane
             anchors.fill: parent
             leftPadding: 0
             padding: 0
             clip: true
             spacing: 0
-            ToolBar {
-                id:toolbar
-                anchors.left: parent.left
-                anchors.top: parent.Top
-                width: drawer.width
-                RowLayout {
-                    anchors.left: parent.left
-                    anchors.top: parent.top
-                    anchors.right: parent.right
-                    spacing: 0
-                    ToolButton {
-                        flat: false
-                        height:64
-                        width:64
-                        icon.source: "qrc:icons/openfile.svg"
-                        onClicked: {
-                            fileDialog.visible = true
-                            fileDialog.sidebarVisible = false
-                        }
-                    }
-                    Item {
-                        Layout.fillWidth: true
-                    }
-                    ToolButton {
-                        height:64
-                        width:64
-                        flat: false
-                        text: qsTr("⋮")
-                    }
-                }
-            }
+
+            MainToolbar{id:toolbar}
+
             Pane {
+                padding: 3
+                id: listPane
                 anchors.top: toolbar.bottom
+                anchors.right: parent.right
                 anchors.left: parent.left
                 anchors.bottom: parent.bottom
-                anchors.right: parent.right
+                width: drawer.width
                 ColumnLayout {
-                    anchors.fill: parent
-                    Label {
-                        text: "Title"
-                        elide: Label.ElideRight
-                        horizontalAlignment: Qt.AlignHCenter
-                        verticalAlignment: Qt.AlignVCenter
-                        //width: drawer.width
-                        Layout.fillWidth: true
-                    }
-                    Rectangle {
-                        id: fileDlg
-                        //width: drawer.width
-                        Layout.fillWidth: true
-                        Layout.fillHeight: true
-                    }
+                    id: meshListPane
                 }
             }
         }
-
     }
 
     // Instantiate the vtk render window

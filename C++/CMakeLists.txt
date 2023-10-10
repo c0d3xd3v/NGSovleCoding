@@ -124,7 +124,6 @@ target_link_libraries(meshing
 
 add_executable(qvtktest
     src/main.cpp
-    src/Ui/main.qml
     src/Ui/vtksceneeventprocessor.h
     src/Ui/vtksceneeventprocessor.cpp
     src/Ui/vtkorientationindicator.h

@@ -1,3 +1,5 @@
+#include <QDebug>
+
 #include <vtk/vtkCellData.h>
 #include <vtk/vtkPolyDataMapper.h>
 #include <vtk/vtkActor.h>
@@ -22,6 +24,10 @@ void MouseInteractorStyle::OnLeftButtonDown()
     // Pick from this location.
     picker->Pick(pos[0], pos[1], 0, this->GetDefaultRenderer());
     std::cout << "Cell id is: " << picker->GetCellId() << std::endl;
+    std::stringstream ss;
+    ss << picker->GetActor();
+
+    qDebug() << ss.str().c_str();
 
     if (picker->GetCellId() != -1)
     {

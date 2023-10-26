@@ -98,7 +98,6 @@ int renderTriangleMesh(Eigen::MatrixXf &nodes, Eigen::MatrixXi &tris)
     // Set the custom stype to use for interaction.
     vtkNew<MouseInteractorStyle> style;
     style->SetDefaultRenderer(qquickvtkItem->renderer());
-    style->rc = &rc;
     iRen->SetInteractorStyle(style);
 
     qquickvtkItem->renderer()->AddActor(rc.getActor());
@@ -111,4 +110,3 @@ int renderTriangleMesh(Eigen::MatrixXf &nodes, Eigen::MatrixXi &tris)
     int a = app.exec();
     return a;
 }
-

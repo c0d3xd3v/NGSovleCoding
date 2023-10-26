@@ -14,7 +14,6 @@ VtkQtController::VtkQtController(QObject *parent)
     interactor = nullptr;
     om = nullptr;
     qquickvtkItem = nullptr;
-    //meshRenderController = nullptr;
     selectionStyle = nullptr;
 }
 
@@ -32,7 +31,7 @@ void VtkQtController::init(QQuickVTKRenderItem* qquickvtkItem, vtkRenderer *rend
 
         defaultInteractionStyle = this->interactor->GetInteractorStyle();
 
-        auto labels{"sal"};
+        auto labels{"xyz"};
         vtkNew<vtkNamedColors> colors;
         colors->SetColor("ParaViewBkg", std::array<unsigned char, 4>{82, 87, 110, 255}.data());
         vtkSmartPointer<vtkPropAssembly> axes = MakeCubeActor(labels, colors);
@@ -63,6 +62,7 @@ void VtkQtController::init(QQuickVTKRenderItem* qquickvtkItem, vtkRenderer *rend
         renderer->SetGradientBackground(true);
 
         selectionStyle = vtkSmartPointer<MouseInteractorStyle>::New();
+        selectionStyle->setMeshRenderController(&meshRenderController);
         selectionStyle->SetDefaultRenderer(renderer);
         interactor->SetInteractorStyle(selectionStyle);
     }
@@ -70,7 +70,6 @@ void VtkQtController::init(QQuickVTKRenderItem* qquickvtkItem, vtkRenderer *rend
 
 void VtkQtController::resize(int width, int height)
 {
-    //qDebug() << width << ", " << height;
     if(om != nullptr)
     {
         om->SetViewport(0.0, 0.0, 100.0/float(width), 100.0/float(height));
@@ -99,13 +98,6 @@ QString VtkQtController::loadFile(QString filepath)
         Eigen::MatrixXi F;
         if(igl::read_triangle_mesh(path, V, F))
         {
-            /*
-            if(meshRenderController != nullptr)
-            {
-                renderer->RemoveActor(meshRenderController->getActor());
-                delete meshRenderController;
-            }
-            */
             MeshRenderController* mc = new MeshRenderController(V, F);
 
             std::stringstream ss;
@@ -119,10 +111,8 @@ QString VtkQtController::loadFile(QString filepath)
             renderer->AddActor(mc->getActor());
             renderer->ResetCamera();
         }
-
         std::setlocale(LC_NUMERIC, oldLocale.c_str());
     }
-
     return hashString;
 }
 
@@ -132,7 +122,6 @@ void VtkQtController::removeObject(QString hashString)
     Iterator itr = meshRenderController.find(hashString.toStdString());
     if(itr != meshRenderController.end())
     {
-        qDebug() << "Delete " << itr->first.c_str();
         renderer->RemoveActor(itr->second->getActor());
         delete itr->second;
         meshRenderController.erase(itr);

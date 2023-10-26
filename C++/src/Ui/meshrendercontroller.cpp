@@ -86,7 +86,6 @@ void MeshRenderController::selectCell(vtkIdType vtkId)
     vtkDataArray *scalars = cellData->GetScalars();
     int  selectColor = (scalars->GetTuple1(vtkId) == 1000) ? 0 : 1000;
 
-    std::cout << "set scalars : " << gids.size() << std::endl;
     for (auto it2 = gids.begin(); it2 != gids.end(); ++it2)
         scalars->SetTuple1(*it2, selectColor);
 

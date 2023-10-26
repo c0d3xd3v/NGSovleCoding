@@ -25,7 +25,6 @@ ApplicationWindow {
         folder: shortcuts.home
         nameFilters: ["surface mesh files (*.stl *.obj)"]
         onAccepted: {
-            console.log("You chose: " + fileDialog.fileUrls)
             var hashString = vtkqtcontroller.loadFile(fileDialog.fileUrls);
             var comp = Qt.createComponent("MeshPane.qml");
             var obj = comp.createObject(meshListPane, {hashString: hashString});

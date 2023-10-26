@@ -36,91 +36,92 @@ find_package(VTK REQUIRED COMPONENTS
 find_package(Eigen3)
 find_package(libigl)
 
-set(TETWILD_INCLUDE_DIR /home/kai/Development/github/fTetWild/build/include)
-set(TETWILD_LIB_DIR /home/kai/Development/libs/fTetwild/lib/)
+set(TETWILD_INCLUDE_DIR /home/kai/Development/libs/fTetWild/include/)
+set(TETWILD_LIB_DIR /home/kai/Development/libs/fTetWild/lib/)
 
 include_directories(src)
 include_directories(${EIGEN_INCLUDE_DIR})
 include_directories(${VTK_INCLUDE_DIR})
 include_directories(${TETWILD_INCLUDE_DIR})
-include_directories(/home/kai/Development/libs/fTetwild/include/geogram1)
+include_directories(${TETWILD_INCLUDE_DIR}/geogram1)
 link_directories(${TETWILD_LIB_DIR})
 
 message("vtk libs : ${VTK_LIBRARIES}")
 
-set(SRC_PDE
-    src/pde/material.cpp
-    src/pde/elasticitysystem.cpp
-    src/pde/eigensystemsolver.cpp
-    src/pde/solutionmapper.cpp)
+#set(SRC_PDE
+#    src/pde/material.cpp
+#    src/pde/elasticitysystem.cpp
+#    src/pde/eigensystemsolver.cpp
+#    src/pde/solutionmapper.cpp)
 
-add_executable(Elasticity-Eigenproblem
-    src/Elasticity-Eigenproblem.cpp
-    ${SRC_PDE}
-    src/Meshing/IOUtils.cpp
-    src/Meshing/IOUtils.h
-    src/Meshing/MshLoader.cpp
-    src/Meshing/MshLoader.h
-    src/Meshing/MshSaver.cpp
-    src/Meshing/MshSaver.h
-)
+#add_executable(Elasticity-Eigenproblem
+#    src/Elasticity-Eigenproblem.cpp
+#    ${SRC_PDE}
+#    src/Meshing/IOUtils.cpp
+#    src/Meshing/IOUtils.h
+#    src/Meshing/MshLoader.cpp
+#    src/Meshing/MshLoader.h
+#    src/Meshing/MshSaver.cpp
+#    src/Meshing/MshSaver.h
+#)
 
-target_link_libraries(Elasticity-Eigenproblem
-    ngcomp
-    Qt5::Gui
-    Qt5::Quick
-    Qt5::Widgets
-    ${VTK_LIBRARIES}
-    Eigen3::Eigen)
+#target_link_libraries(Elasticity-Eigenproblem
+#    ngcomp
+#    Qt5::Gui
+#    Qt5::Quick
+#    Qt5::Widgets
+#    ${VTK_LIBRARIES}
+#    Eigen3::Eigen)
 
 
-add_executable(meshing
-    src/meshing.cpp
-    src/Ui/vtksceneeventprocessor.h
-    src/Ui/vtksceneeventprocessor.cpp
-    src/Ui/vtkorientationindicator.h
-    src/Ui/vtkorientationindicator.cpp
-    src/Ui/instantrendering.h
-    src/Ui/instantrendering.cpp
-    src/Ui/meshrendercontroller.h
-    src/Ui/meshrendercontroller.cpp
-    src/Ui/cellpicking.h
-    src/Ui/cellpicking.cpp
-    src/Ui/resources.qrc
-    src/Meshing/IOUtils.cpp
-    src/Meshing/IOUtils.h
-    src/Meshing/MshLoader.cpp
-    src/Meshing/MshLoader.h
-    src/Meshing/MshSaver.cpp
-    src/Meshing/MshSaver.h
-    src/Meshing/tettools.h
-    src/Meshing/tettools.cpp
-    src/tinyxml2/tinyxml2.cpp
-    src/tinyxml2/tinyxml2.h
-    src/Ui/colormaphelper.h
-    src/Ui/colormaphelper.cpp
-    src/Meshing/graph.h
-    src/Meshing/graph.cpp
-)
+#add_executable(meshing
+#    src/meshing.cpp
+#    src/Ui/vtksceneeventprocessor.h
+#    src/Ui/vtksceneeventprocessor.cpp
+#    src/Ui/vtkorientationindicator.h
+#    src/Ui/vtkorientationindicator.cpp
+#    src/Ui/instantrendering.h
+#    src/Ui/instantrendering.cpp
+#    src/Ui/meshrendercontroller.h
+#    src/Ui/meshrendercontroller.cpp
+#    src/Ui/cellpicking.h
+#    src/Ui/cellpicking.cpp
+#    src/Ui/resources.qrc
+#    src/Meshing/IOUtils.cpp
+#    src/Meshing/IOUtils.h
+#    src/Meshing/MshLoader.cpp
+#    src/Meshing/MshLoader.h
+#    src/Meshing/MshSaver.cpp
+#    src/Meshing/MshSaver.h
+#    src/Meshing/tettools.h
+#    src/Meshing/tettools.cpp
+#    src/tinyxml2/tinyxml2.cpp
+#    src/tinyxml2/tinyxml2.h
+#    src/Ui/colormaphelper.h
+#    src/Ui/colormaphelper.cpp
+#    src/Meshing/graph.h
+#    src/Meshing/graph.cpp
+#)
 
-target_link_libraries(meshing
-    Qt5::Gui
-    Qt5::Quick
-    Qt5::Widgets
-    Qt5::QuickControls2
-    ${VTK_LIBRARIES}
-    Eigen3::Eigen
-    igl::igl_core
-    ngcomp
-    gmp
-    FloatTetwild
-    predicates
-    fmt
-    tbb_static
-    geogram
-    FastEnvelope
-    IndirectPredicates
-)
+
+#target_link_libraries(meshing
+#    Qt5::Gui
+#    Qt5::Quick
+#    Qt5::Widgets
+#    Qt5::QuickControls2
+#    ${VTK_LIBRARIES}
+#    Eigen3::Eigen
+#    igl::igl_core
+#    ngcomp
+#    gmp
+#    FloatTetwild
+#    predicates
+#    fmt
+#    tbb_static
+#    geogram
+#    FastEnvelope
+#    IndirectPredicates
+#)
 
 add_executable(qvtktest
     src/main.cpp
@@ -132,17 +133,17 @@ add_executable(qvtktest
     src/Ui/instantrendering.cpp
     src/Ui/meshrendercontroller.h
     src/Ui/meshrendercontroller.cpp
-    src/tinyxml2/tinyxml2.cpp
-    src/tinyxml2/tinyxml2.h
     src/Ui/colormaphelper.h
     src/Ui/colormaphelper.cpp
     src/Ui/cellpicking.h
     src/Ui/cellpicking.cpp
-    src/Meshing/graph.h
-    src/Meshing/graph.cpp
     src/Ui/resources.qrc
     src/Ui/vtkqtcontroller.h
     src/Ui/vtkqtcontroller.cpp
+    src/tinyxml2/tinyxml2.cpp
+    src/tinyxml2/tinyxml2.h
+    src/Meshing/graph.h
+    src/Meshing/graph.cpp
 
 )
 

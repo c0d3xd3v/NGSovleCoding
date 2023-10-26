@@ -14,26 +14,56 @@ Pane {
     Frame {
         padding: 0
         anchors.fill: parent
-        RowLayout {
-            spacing: 0
-            anchors.right: parent.right
+        Frame{
+            id: toolBar
+            anchors.top: parent.top
             anchors.left: parent.left
-            ToolButton {
-                flat: false
-                height:64
-                width:64
-                icon.source: "qrc:/icons/close.svg"
-                onClicked: {
-                    deleteMesh(hashString, _meshPane)
+            anchors.right: parent.right
+            padding: 0
+            RowLayout {
+                spacing: 0
+                anchors.right: parent.right
+                anchors.left: parent.left
+                ToolButton {
+                    flat: false
+                    height:64
+                    width:64
+                    icon.source: "qrc:/icons/close.svg"
+                    onClicked: {
+                        deleteMesh(hashString, _meshPane)
+                    }
+                }
+                Item {
+                    Layout.fillWidth: true
+                }
+                ToolButton {
+                    flat: true
+                    height:64
+                    width:64
+                    rotation: -90
+                    icon.source: "qrc:/icons/arrow_back.svg"
+                    onClicked: {
+                        rotation = rotation * -1;
+                    }
                 }
             }
-            Item {
-                Layout.fillWidth: true
-            }
+        }
+        GridLayout {
+            anchors.top: toolBar.bottom
             ToolButton {
-                flat: true
                 height:64
                 width:64
+                flat: true
+                rotation: -90
+                icon.source: "qrc:/icons/arrow_back.svg"
+                onClicked: {
+                    rotation = rotation * -1;
+                }
+            }
+            ToolButton {
+                height:64
+                width:64
+                flat: true
                 rotation: -90
                 icon.source: "qrc:/icons/arrow_back.svg"
                 onClicked: {
@@ -41,9 +71,9 @@ Pane {
                 }
             }
         }
-    }
-    Item {
-        Layout.fillWidth: true
-        Layout.fillHeight: true
+        Item {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+        }
     }
 }

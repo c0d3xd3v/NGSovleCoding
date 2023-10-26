@@ -8,18 +8,22 @@
 #include <vtk/vtkCaptionActor2D.h>
 
 
-vtkSmartPointer<vtkAxesActor> MakeAxesActor(std::array<double, 3>& scale,
-                                   std::array<std::string, 3> const& xyzLabels)
+vtkSmartPointer<vtkAxesActor> MakeAxesActor(std::array<double, 3>& scale/*,
+                                   std::array<std::string, 3> const& xyzLabels*/
+                                            )
 {
     vtkNew<vtkAxesActor> axes;
     axes->SetScale(scale.data());
     axes->SetShaftTypeToCylinder();
-    axes->SetXAxisLabelText(xyzLabels[0].c_str());
-    axes->SetYAxisLabelText(xyzLabels[1].c_str());
-    axes->SetZAxisLabelText(xyzLabels[2].c_str());
-    axes->SetCylinderRadius(0.5 * axes->GetCylinderRadius());
-    axes->SetConeRadius(1.025 * axes->GetConeRadius());
+
+    axes->SetXAxisLabelText("");
+    axes->SetYAxisLabelText("");
+    axes->SetZAxisLabelText("");
+
+    axes->SetCylinderRadius(1.2 * axes->GetCylinderRadius());
+    axes->SetConeRadius(1.5 * axes->GetConeRadius());
     axes->SetSphereRadius(1.5 * axes->GetSphereRadius());
+    /*
     auto tprop = axes->GetXAxisCaptionActor2D()->GetCaptionTextProperty();
     tprop->ItalicOn();
     tprop->ShadowOn();
@@ -27,6 +31,7 @@ vtkSmartPointer<vtkAxesActor> MakeAxesActor(std::array<double, 3>& scale,
     // Use the same text properties on the other two axes.
     axes->GetYAxisCaptionActor2D()->GetCaptionTextProperty()->ShallowCopy(tprop);
     axes->GetZAxisCaptionActor2D()->GetCaptionTextProperty()->ShallowCopy(tprop);
+    */
     return axes;
 }
 
@@ -101,7 +106,8 @@ vtkSmartPointer<vtkPropAssembly> MakeCubeActor(std::string const& labelSelector,
     // We are combining a vtkAxesActor and a vtkAnnotatedCubeActor
     // into a vtkPropAssembly
     auto cube = MakeAnnotatedCubeActor(cubeLabels, colors);
-    auto axes = MakeAxesActor(scale, xyzLabels);
+
+    auto axes = MakeAxesActor(scale/*, xyzLabels*/);
 
     // Combine orientation markers into one with an assembly.
     vtkNew<vtkPropAssembly> assembly;

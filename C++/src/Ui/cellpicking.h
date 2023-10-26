@@ -16,17 +16,13 @@
 
 class MouseInteractorStyle : public vtkInteractorStyleTrackballCamera
 {
+private:
+    std::map<std::string, MeshRenderController *> *meshRenderController;
 public:
     static MouseInteractorStyle* New();
-
     MouseInteractorStyle();
-
     virtual void OnLeftButtonDown() override;
-
-    vtkSmartPointer<vtkPolyData> Data;
-    MeshRenderController *rc;
-    //vtkSmartPointer<vtkDataSetMapper> selectedMapper;
-    //vtkSmartPointer<vtkActor> selectedActor;
+    void setMeshRenderController(std::map<std::string, MeshRenderController *> *newMeshRenderController);
 };
 
 #endif // CELLPICKING_H

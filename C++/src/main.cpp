@@ -24,7 +24,7 @@ int main (int argc, char ** argv)
     engine.addImportPath("/usr/lib/qml/");
 
     engine.rootContext()->setContextProperty("vtkqtcontroller", &vtkqtcontroller);
-    engine.load(QUrl("qrc:main.qml"));
+    engine.load(QUrl("qrc:/main.qml"));
 
     QObject* topLevel = engine.rootObjects().value(0);
     QQuickWindow* window = qobject_cast<QQuickWindow*>(topLevel);

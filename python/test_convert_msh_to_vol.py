@@ -4,7 +4,7 @@ import wildmeshing as wm
 
 from meshing.tools import *
 
-path = "/home/kai/Development/github/NGSovleCoding/data/tw/tw_tuningfork_.msh"
+path = "/home/kai/Development/github/NGSovleCoding/data/tw/tuningfork.msh"
 tetra = wm.Tetrahedralizer()
 
 tetra.load_mesh(path)

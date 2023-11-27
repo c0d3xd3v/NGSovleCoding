@@ -70,7 +70,11 @@ def addVolumeFromLists(index, mesh, points, tets):
         pmap[i] = mesh.Add(mp)
 
     for i, tet in enumerate(tets):
-        T = Element3D(index, [pmap[v] for v in tet])
+        vindices = [pmap[v] for v in tet]
+        tmp = vindices[2]
+        vindices[2] = vindices[3]
+        vindices[3] = tmp
+        T = Element3D(index, vindices)
         mesh.Add(T)
 
     return mesh

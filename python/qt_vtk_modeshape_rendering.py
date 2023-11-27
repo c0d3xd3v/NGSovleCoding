@@ -5,7 +5,7 @@ from Visualization.VtkPressureFieldActor import *
 from Visualization.VtkModeshapeScene import *
 from Visualization.VtkQtRenderWindow import *
 
-import wildmeshing as wm
+#import wildmeshing as wm
 
 if __name__ == "__main__":
 

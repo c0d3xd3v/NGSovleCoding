@@ -1,9 +1,9 @@
 #include <QDebug>
 #include <QQuickWindow>
+
 #include <igl/read_triangle_mesh.h>
 
 #include "Ui/vtkorientationindicator.h"
-
 #include "vtkqtcontroller.h"
 
 VtkQtController::VtkQtController(QObject *parent)

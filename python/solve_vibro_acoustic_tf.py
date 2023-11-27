@@ -4,7 +4,7 @@ from VibroAcoustic import *
 from elasticity.eigenfrequencies import *
 from acoustic.boundarysourcesolver import *
 
-path = "/home/kai/Development/NGSovleCoding/test_data/tuningfork.stl"
+path = "/home/kai/Development/github/NGSovleCoding/data/tuningfork.stl"
 
 SetVisualization(clipping=True, clipnormal=tuple([0., 0., -1.]))
 

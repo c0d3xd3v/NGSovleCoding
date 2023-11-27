@@ -9,5 +9,7 @@
         <file>icons/arrow_back.svg</file>
         <file>icons/close.svg</file>
         <file>icons/vectorpaint.svg</file>
+        <file>SidePanel.qml</file>
+        <file>RenderScene.qml</file>
     </qresource>
 </RCC>

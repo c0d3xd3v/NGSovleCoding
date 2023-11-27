@@ -154,4 +154,14 @@ target_link_libraries(qvtktest
     Qt5::QuickControls2
     ${VTK_LIBRARIES}
     Eigen3::Eigen
-    igl::igl_core)
+    igl::igl_core
+    ngstd
+    gmp
+    FloatTetwild
+    predicates
+    fmt
+    tbb_static
+    geogram
+    FastEnvelope
+    IndirectPredicates
+)

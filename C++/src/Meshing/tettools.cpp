@@ -46,7 +46,9 @@ netgen::Mesh *generateNGMesh(Eigen::MatrixXf &nodes, Eigen::MatrixXi &tris, Eige
         mesh->AddPoint(p);
     }
 
-    netgen::FaceDescriptor fd(1, 0, 1, 0);
+    netgen::FaceDescriptor fd(1, 1, 1, 1);
+    fd.SetBCName("default");
+    fd.SetBCProperty(1);
     int si = mesh->AddFaceDescriptor(fd);
 
     for(unsigned int i = 0; i < tris.rows(); i++)

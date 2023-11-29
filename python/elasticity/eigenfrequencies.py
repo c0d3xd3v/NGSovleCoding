@@ -60,8 +60,8 @@ def build_elasticity_system_on_fes(_material, _fes, shift):
                               + shift * _material.rho * _u * _v)
     _b = ngsolve.BilinearForm(_fes)
     _b += ngsolve.SymbolicBFI(_material.rho * _u * _v)
-    _a.Assemble()
-    _b.Assemble()
+    #_a.Assemble()
+    #_b.Assemble()
     return _a, _b
 
 

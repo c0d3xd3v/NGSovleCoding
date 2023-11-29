@@ -1,16 +1,53 @@
+import sys
 import ngsolve
-
+from ngsolve import *
 from VibroAcoustic import *
 from elasticity.eigenfrequencies import *
 from acoustic.boundarysourcesolver import *
+import ngsolve.solvers as solvers
+from ngsolve.la import EigenValues_Preconditioner
 
-path = "/home/kai/Development/github/NGSovleCoding/data/ridex-Body004.vol"
-
+#path = sys.argv[1] # '../data/tuningfork_.vol' #sys.argv[1] #"/home/kai/Development/github/NGSovleCoding/data/ridex-Body004.vol"
+path = '../build-C++-Imported_Kit-Debug/test.vol'
 #SetVisualization(clipping=True, clipnormal=tuple([0., 0., -1.]))
 
 mesh = ngsolve.Mesh(path)
 
 solid_fes = VectorH1(mesh, order=2, complex=True)
-eigenmodes, lams = solveElasticityEigenmodes(solid_fes, 10, (1+10000j), steel)
-#print(len(lams))
-Draw(eigenmodes)
+a, b = build_elasticity_system_on_fes(steel, solid_fes, (0+0.0j))
+
+# bddc, h1amg, multigrid, local
+precond = 'bddc'
+pre = Preconditioner(a, precond)
+#pre = IdentityMatrix(solid_fes.ndof, complex=True)
+
+a.Assemble()
+b.Assemble()
+
+#jac = a.mat.CreateBlockSmoother(solid_fes.CreateSmoothingBlocks())
+#preJpoint = a.mat.CreateSmoother(solid_fes.FreeDofs())
+lams = ngsolve.krylovspace.EigenValues_Preconditioner(mat=a.mat, pre=pre)
+#kapa = max(lams)/min(lams)
+#print(kapa)
+
+count = 40
+gfu = GridFunction(solid_fes, multidim=count)
+
+lams = ngsolve.ArnoldiSolver(a.mat, b.mat, solid_fes.FreeDofs(), list(gfu.vecs), 4000)
+
+#e, ev = solvers.LOBPCG(a.mat, b.mat, pre, num=count, maxit=300, printrates=True)
+#for i in range(count):
+#    gfu.vec.data[i] = ev[i][0]
+
+#print(gfu.vecs.data[0])
+
+# VTKOutput object
+vtk = VTKOutput(ma=mesh,
+                coefs=[gfu.vecs[0][0].real, gfu.vecs[0][0].imag],
+                names = ["eigenmode0", "eigenmode1"],
+                filename="mode0",
+                subdivision=1,
+                legacy=False)
+vtk.Do()
+
+Draw(gfu)

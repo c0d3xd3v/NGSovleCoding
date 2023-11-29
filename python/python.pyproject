@@ -1,5 +1,6 @@
 {
     "files": [
+        "NGSlepc.py",
         "VibroAcoustic.py",
         "Visualization/VtkModeshapeActor.py",
         "Visualization/VtkModeshapeScene.py",

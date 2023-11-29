@@ -5,7 +5,7 @@ import QtQuick.Layouts 1.3
 import QtQuick.Window 2.15
 
 // import the VTK module
-import VTK 9.2
+import VTK 9.3
 
 // window containing the application
 ApplicationWindow {
@@ -17,9 +17,9 @@ ApplicationWindow {
     id: window
     readonly property bool inPortrait: window.width < 750
 
-    onBeforeRendering: {
-        vtkqtcontroller.resize(renderItem.width, renderItem.height);
-    }
+//    onBeforeRendering: {
+        //vtkqtcontroller.resize(renderItem.width, renderItem.height);
+//    }
 
     // Instantiate the vtk render window
     VTKRenderWindow {

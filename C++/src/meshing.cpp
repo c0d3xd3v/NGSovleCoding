@@ -5,7 +5,9 @@
 
 int main (int argc, char ** argv)
 {
-    std::string path = "/home/kai/Development/github/NGSovleCoding/data/tw/tw_tuningfork_.msh";
+    std::string path = argv[1]; //"/home/kai/Development/github/FloatTetwild/build/ridex-Body004.obj_.msh";
+    std::cout << "path : " << path << std::endl;
+
     Eigen::MatrixXf nodes;
     Eigen::MatrixXi tris;
     Eigen::MatrixXi tets;

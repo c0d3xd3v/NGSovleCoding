@@ -2,8 +2,8 @@
 #define TETTOOLS_H
 
 #include <Eigen/Dense>
-#include <netgen/nglib.h>
-#include <netgen/meshing/meshing.hpp>
+#include <nglib.h>
+#include <meshing/meshing.hpp>
 
 void loadMSH(std::string &path, Eigen::MatrixXf &nodes, Eigen::MatrixXi &tris, Eigen::MatrixXi &tets);
 void getSurfaceTriangles(Eigen::MatrixXf &nodes, Eigen::MatrixXi &tets, Eigen::MatrixXi &F2);

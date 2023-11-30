@@ -30,7 +30,7 @@ lams = ngsolve.krylovspace.EigenValues_Preconditioner(mat=a.mat, pre=pre)
 #kapa = max(lams)/min(lams)
 #print(kapa)
 
-count = 40
+count = 10
 gfu = GridFunction(solid_fes, multidim=count)
 
 lams = ngsolve.ArnoldiSolver(a.mat, b.mat, solid_fes.FreeDofs(), list(gfu.vecs), 4000)
@@ -41,9 +41,10 @@ lams = ngsolve.ArnoldiSolver(a.mat, b.mat, solid_fes.FreeDofs(), list(gfu.vecs),
 
 #print(gfu.vecs.data[0])
 
+E = gfu.MDComponent(6)
 # VTKOutput object
 vtk = VTKOutput(ma=mesh,
-                coefs=[gfu.vecs[0][0].real, gfu.vecs[0][0].imag],
+                coefs=[E.real, E.imag],
                 names = ["eigenmode0", "eigenmode1"],
                 filename="mode0",
                 subdivision=1,

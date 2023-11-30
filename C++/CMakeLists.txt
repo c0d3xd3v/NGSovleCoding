@@ -48,30 +48,30 @@ link_directories(${TETWILD_LIB_DIR})
 
 message("vtk libs : ${VTK_LIBRARIES}")
 
-#set(SRC_PDE
-#    src/pde/material.cpp
-#    src/pde/elasticitysystem.cpp
-#    src/pde/eigensystemsolver.cpp
-#    src/pde/solutionmapper.cpp)
+set(SRC_PDE
+   src/pde/material.cpp
+   src/pde/elasticitysystem.cpp
+   src/pde/eigensystemsolver.cpp
+   src/pde/solutionmapper.cpp)
 
-#add_executable(Elasticity-Eigenproblem
-#    src/Elasticity-Eigenproblem.cpp
-#    ${SRC_PDE}
-#    src/Meshing/IOUtils.cpp
-#    src/Meshing/IOUtils.h
-#    src/Meshing/MshLoader.cpp
-#    src/Meshing/MshLoader.h
-#    src/Meshing/MshSaver.cpp
-#    src/Meshing/MshSaver.h
-#)
+add_executable(Elasticity-Eigenproblem
+   src/Elasticity-Eigenproblem.cpp
+   ${SRC_PDE}
+   src/Meshing/IOUtils.cpp
+   src/Meshing/IOUtils.h
+   src/Meshing/MshLoader.cpp
+   src/Meshing/MshLoader.h
+   src/Meshing/MshSaver.cpp
+   src/Meshing/MshSaver.h
+)
 
-#target_link_libraries(Elasticity-Eigenproblem
-#    ngcomp
-#    Qt5::Gui
-#    Qt5::Quick
-#    Qt5::Widgets
-#    ${VTK_LIBRARIES}
-#    Eigen3::Eigen)
+target_link_libraries(Elasticity-Eigenproblem
+   ngcomp
+   Qt5::Gui
+   Qt5::Quick
+   Qt5::Widgets
+   ${VTK_LIBRARIES}
+   Eigen3::Eigen)
 
 
 add_executable(meshing

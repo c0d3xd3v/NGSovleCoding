@@ -17,7 +17,7 @@ solid_fes = VectorH1(mesh, order=2, complex=True)
 a, b = build_elasticity_system_on_fes(steel, solid_fes, (0+0.0j))
 
 # bddc, h1amg, multigrid, local
-precond = 'bddc'
+precond = 'h1amg'
 pre = Preconditioner(a, precond)
 #pre = IdentityMatrix(solid_fes.ndof, complex=True)
 
@@ -30,7 +30,7 @@ lams = ngsolve.krylovspace.EigenValues_Preconditioner(mat=a.mat, pre=pre)
 #kapa = max(lams)/min(lams)
 #print(kapa)
 
-count = 10
+count = 15
 gfu = GridFunction(solid_fes, multidim=count)
 
 lams = ngsolve.ArnoldiSolver(a.mat, b.mat, solid_fes.FreeDofs(), list(gfu.vecs), 4000)
@@ -41,7 +41,7 @@ lams = ngsolve.ArnoldiSolver(a.mat, b.mat, solid_fes.FreeDofs(), list(gfu.vecs),
 
 #print(gfu.vecs.data[0])
 
-E = gfu.MDComponent(6)
+E = gfu.MDComponent(10)
 # VTKOutput object
 vtk = VTKOutput(ma=mesh,
                 coefs=[E.real, E.imag],
@@ -52,3 +52,7 @@ vtk = VTKOutput(ma=mesh,
 vtk.Do()
 
 Draw(gfu)
+
+ngmesh = mesh.ngmesh
+
+

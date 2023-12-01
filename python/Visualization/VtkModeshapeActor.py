@@ -101,7 +101,7 @@ class VtkModeShapeActor():
             True, # before the standard replacements
             "//VTK::ValuePass::Impl\n" # we still want the default
             "vec3 displacement = real*cos(6.28*time_value) + imag*sin(6.28*time_value);"
-            "vec3 r = vertexMC.xyz + displacement;\n"
+            "vec3 r = vertexMC.xyz + displacement*3.;\n"
             "vertexVCVSOutput = MCVCMatrix * vec4(r, 1.0);\n"
             "gl_Position = MCDCMatrix * vec4(r, 1.0);\n",
             False # only do it once

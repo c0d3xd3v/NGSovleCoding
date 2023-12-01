@@ -39,8 +39,7 @@ def build_elasticity_system(_mesh, _material, _dirichlet, shift):
     _a += ngsolve.SymbolicBFI(2 * _material.mu
                               * ngsolve.InnerProduct(1.0 / 2.0 * (ngsolve.grad(_u) + ngsolve.grad(_u).trans),
                                                      1.0 / 2.0 * (ngsolve.grad(_v) + ngsolve.grad(_v).trans))
-                              + _material.lam * ngsolve.div(_u) * ngsolve.div(_v)
-                              + shift * _material.rho * _u * _v)
+                              + _material.lam * ngsolve.div(_u) * ngsolve.div(_v))
     _b = ngsolve.BilinearForm(_fes)
     _b += ngsolve.SymbolicBFI(_material.rho * _u * _v)
     _a.Assemble()
@@ -56,12 +55,10 @@ def build_elasticity_system_on_fes(_material, _fes, shift):
     _a += ngsolve.SymbolicBFI(2 * _material.mu
                               * ngsolve.InnerProduct(1.0 / 2.0 * (ngsolve.grad(_u) + ngsolve.grad(_u).trans),
                                                      1.0 / 2.0 * (ngsolve.grad(_v) + ngsolve.grad(_v).trans))
-                              + _material.lam * ngsolve.div(_u) * ngsolve.div(_v)
-                              + shift * _material.rho * _u * _v)
+                              + _material.lam * ngsolve.div(_u) * ngsolve.div(_v))
     _b = ngsolve.BilinearForm(_fes)
     _b += ngsolve.SymbolicBFI(_material.rho * _u * _v)
-    #_a.Assemble()
-    #_b.Assemble()
+
     return _a, _b
 
 
@@ -69,9 +66,18 @@ def build_elasticity_system_on_fes(_material, _fes, shift):
 def solveElasticityEigenmodes(fes, num, shift, material):
     #num = 20
     #shift = 10.0
-    a, b = build_elasticity_system_on_fes(material, fes, shift)
+    a, b = build_elasticity_system_on_fes(material, fes, (0+0.0j))
+    # bddc, h1amg, multigrid, local
+    precond = 'bddc'
+    pre = ngsolve.Preconditioner(a, precond)
+
+    a.Assemble()
+    b.Assemble()
+
+    #lams = ngsolve.krylovspace.EigenValues_Preconditioner(mat=a.mat, pre=pre)
+
     u = ngsolve.GridFunction(fes, name="eigenmodes", multidim=num)
-    lams = ngsolve.ArnoldiSolver(a.mat, b.mat, fes.FreeDofs(), list(u.vecs), shift)
+    lams = ngsolve.ArnoldiSolver(a.mat, b.mat, fes.FreeDofs(), list(u.vecs), 4000.0)
     return u, lams
 
 

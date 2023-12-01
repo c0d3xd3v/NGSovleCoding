@@ -47,7 +47,7 @@ netgen::Mesh *generateNGMesh(Eigen::MatrixXf &nodes, Eigen::MatrixXi &tris, Eige
     }
 
     netgen::FaceDescriptor fd(1, 1, 1, 1);
-    fd.SetBCName("default");
+    fd.SetBCName("solid");
     fd.SetBCProperty(1);
     int si = mesh->AddFaceDescriptor(fd);
 
@@ -71,7 +71,7 @@ netgen::Mesh *generateNGMesh(Eigen::MatrixXf &nodes, Eigen::MatrixXi &tris, Eige
         el.SetIndex(0);
         mesh->AddVolumeElement(el);
     }
-
+    mesh->SetMaterial(1, "solid");
     return mesh;
 }
 

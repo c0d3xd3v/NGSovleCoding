@@ -22,7 +22,7 @@ class VtkPressureFieldActor():
     def setDataset(self, dataset):
         self.dataset = dataset
         self.center = dataset.GetCenter()
-        xnorm = [0.0, 0.0, 1.0]
+        xnorm = [0.0, 1.0, 0.0]
     
         self.clipPlane = vtk.vtkPlane()
         self.clipPlane.SetOrigin(self.center)

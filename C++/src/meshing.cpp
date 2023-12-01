@@ -22,6 +22,8 @@ int main (int argc, char ** argv)
     igl::writeOBJ("test.obj", nodes, tris);
     mesh->Save("test.vol");
 
+    delete mesh;
+
     renderTriangleMesh(nodes, tris);
 
     return 0;

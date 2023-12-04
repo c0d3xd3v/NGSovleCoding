@@ -88,7 +88,7 @@ class VtkPressureFieldActor():
         mapper.SetScalarModeToUsePointFieldData()
         mapper.SetColorModeToMapScalars()
         mapper.InterpolateScalarsBeforeMappingOn()
-        sr = 0.0001
+        sr = 0.00001
         mapper.SetScalarRange([-sr, sr])
         mapper.SetLookupTable(self.lut)
 

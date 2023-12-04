@@ -122,7 +122,7 @@ def create_color_transfer_function_from_xml(xml_filename):
         b = float(point.get("b"))
         colorTransferFunction.AddRGBPoint(x, r, g, b)
     
-    color_steps = 8
+    color_steps = 20
     # Erstellen einer VTK-Lookup-Tabelle (LookupTable) basierend auf der Farbtransferfunktion
     lut = vtk.vtkLookupTable()
     lut.SetNumberOfTableValues(color_steps)  # Anzahl der Werte in der LUT (z.B. 256 für 8-Bit Farbtiefe)

@@ -13,10 +13,10 @@ private:
 
 public:
     EigenSystemSolver(double precision,
-                      std::shared_ptr<BaseMatrix> a,
-                      std::shared_ptr<BaseMatrix> m,
+                      std::shared_ptr<T_BilinearFormSymmetric<Complex> > a,
+                      std::shared_ptr<T_BilinearFormSymmetric<Complex> > m,
                       std::shared_ptr<VectorH1FESpace> fes,
-                      double shift);
+                      double shift = 4000);
 
     Array<Complex> &getLams();
 

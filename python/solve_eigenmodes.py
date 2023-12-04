@@ -7,6 +7,7 @@ from acoustic.boundarysourcesolver import *
 import ngsolve.solvers as solvers
 from ngsolve.la import EigenValues_Preconditioner
 
+
 #path = sys.argv[1] # '../data/tuningfork_.vol' #sys.argv[1] #"/home/kai/Development/github/NGSovleCoding/data/ridex-Body004.vol"
 path = '../build-C++-Imported_Kit-Debug/test.vol'
 #SetVisualization(clipping=True, clipnormal=tuple([0., 0., -1.]))
@@ -34,7 +35,9 @@ count = 15
 gfu = GridFunction(solid_fes, multidim=count)
 
 lams = ngsolve.ArnoldiSolver(a.mat, b.mat, solid_fes.FreeDofs(), list(gfu.vecs), 4000)
-
+#lams, evecs = ngsolve.solvers.PINVIT(a.mat, b.mat, pre, num=count, maxit=int(count/2), printrates=True, GramSchmidt=True)
+#for i in range(len(evecs)):
+#    gfu.vecs[i].data = evecs[i]
 #e, ev = solvers.LOBPCG(a.mat, b.mat, pre, num=count, maxit=300, printrates=True)
 #for i in range(count):
 #    gfu.vec.data[i] = ev[i][0]
@@ -54,5 +57,6 @@ vtk.Do()
 Draw(gfu)
 
 ngmesh = mesh.ngmesh
+print(lams)
 
 

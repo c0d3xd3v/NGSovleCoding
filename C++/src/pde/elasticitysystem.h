@@ -10,8 +10,6 @@ using namespace ngcomp;
 class ElasticityFESetup
 {
 private:
-    double shift;
-
     std::shared_ptr<VectorH1FESpace> fes;
     std::shared_ptr<T_BilinearFormSymmetric<Complex>> bfa;
     std::shared_ptr<T_BilinearFormSymmetric<Complex>> bfm;
@@ -19,11 +17,9 @@ private:
 public:
     ElasticityFESetup(std::shared_ptr<MeshAccess> ma,
                   Material &material,
-                  Array<double> &dirbnd,
-                  double shift = 10.0);
-    double getShift();
+                  Array<double> &dirbnd);
     std::shared_ptr<VectorH1FESpace> &getFes();
-    std::shared_ptr<BaseMatrix> getBfaMatrix();
-    std::shared_ptr<BaseMatrix> getBfmMatrix();
+    std::shared_ptr<T_BilinearFormSymmetric<Complex>> getBfaMatrix();
+    std::shared_ptr<T_BilinearFormSymmetric<Complex>> getBfmMatrix();
 };
 #endif // ELASTICITYSYSTEM_H

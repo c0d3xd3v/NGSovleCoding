@@ -74,10 +74,13 @@ def solveElasticityEigenmodes(fes, num, shift, material):
     a.Assemble()
     b.Assemble()
 
-    #lams = ngsolve.krylovspace.EigenValues_Preconditioner(mat=a.mat, pre=pre)
+    lams = ngsolve.krylovspace.EigenValues_Preconditioner(mat=a.mat, pre=pre)
 
     u = ngsolve.GridFunction(fes, name="eigenmodes", multidim=num)
-    lams = ngsolve.ArnoldiSolver(a.mat, b.mat, fes.FreeDofs(), list(u.vecs), 4000.0)
+    #lams = ngsolve.ArnoldiSolver(a.mat, b.mat, fes.FreeDofs(), list(u.vecs), 4000.0)
+    lams, evecs = ngsolve.solvers.PINVIT(a.mat, b.mat, pre, printrates=True, GramSchmidt=True)
+    for i in range(len(evecs)):
+        u.vecs[i].data = evecs[i]
     return u, lams
 
 

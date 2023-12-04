@@ -69,15 +69,15 @@ class VtkModeShapeActor():
         mapper = vtk.vtkOpenGLPolyDataMapper()
         mapper.SetInputData(dataset)
         mapper.ScalarVisibilityOn()
-        mapper.SelectColorArray('eigenmode0')
-        mapper.SetScalarModeToUsePointFieldData()
-        mapper.SetColorModeToMapScalars()
-        mapper.InterpolateScalarsBeforeMappingOn()
+        #mapper.SelectColorArray('eigenmode0')
+        #mapper.SetScalarModeToUsePointFieldData()
+        #mapper.SetColorModeToMapScalars()
+        #mapper.InterpolateScalarsBeforeMappingOn()
         mapper.MapDataArrayToVertexAttribute("real", "eigenmode0", vtk.vtkDataObject.FIELD_ASSOCIATION_POINTS, 3)
         mapper.MapDataArrayToVertexAttribute("imag", "eigenmode1", vtk.vtkDataObject.FIELD_ASSOCIATION_POINTS, 3)
-        sr = 0.1
-        mapper.SetScalarRange([0.0, sr])
-        mapper.SetLookupTable(self.lut)
+        #sr = 0.1
+        #mapper.SetScalarRange([0.0, sr])
+        #mapper.SetLookupTable(self.lut)
 
         return mapper
 

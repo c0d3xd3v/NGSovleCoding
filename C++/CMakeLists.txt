@@ -1,5 +1,7 @@
-project(ngsolve-apps)
 cmake_minimum_required(VERSION 3.1)
+
+project(ngsolve-apps)
+
 cmake_policy(SET CMP0054 NEW)
 cmake_policy(SET CMP0043 NEW)
 cmake_policy(SET CMP0020 NEW)
@@ -63,6 +65,8 @@ add_executable(Elasticity-Eigenproblem
    src/Meshing/MshLoader.h
    src/Meshing/MshSaver.cpp
    src/Meshing/MshSaver.h
+   src/pde/modemeanmaxvariation.h
+   src/pde/modemeanmaxvariation.cpp
 )
 
 target_link_libraries(Elasticity-Eigenproblem

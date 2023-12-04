@@ -4,6 +4,9 @@ from VibroAcoustic import *
 from elasticity.eigenfrequencies import *
 from acoustic.boundarysourcesolver import *
 
+
+ngsolve.MPI_Init()
+
 path = '../build-C++-Imported_Kit-Debug/test.vol' # "/home/kai/Development/github/NGSovleCoding/data/tuningfork.stl"
 
 SetVisualization(clipping=True, clipnormal=tuple([0., 0., -1.]))
@@ -16,11 +19,11 @@ eigenmodes, lams = solveElasticityEigenmodes(solid_fes, 10, (0.+0.j), steel)
 print(len(lams))
 Draw(eigenmodes)
 
-ngmesh = generateVibroAcousticDomain_(solidMesh, maxh=50.0)
+ngmesh = generateVibroAcousticDomain_(solidMesh, maxh=30.0)
 
 Draw(ngmesh)
 
-air_fes = H1(ngmesh, definedon="air", dirichlet=ngmesh.Boundaries("solid|fixed"), order=2, complex=True)
+air_fes = H1(ngmesh, definedon="air", dirichlet=ngmesh.Boundaries("solid|fixed"), order=3, complex=True)
 n = specialcf.normal(3)
 E = eigenmodes.MDComponent(7)
 g = BoundaryFromVolumeCF(E)

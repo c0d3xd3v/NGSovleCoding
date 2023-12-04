@@ -1,11 +1,8 @@
 #include "elasticitysystem.h"
 
-ElasticityFESetup::ElasticityFESetup(
-        std::shared_ptr<MeshAccess> ma,
+ElasticityFESetup::ElasticityFESetup(std::shared_ptr<MeshAccess> ma,
         Material &material,
-        Array<double> &dirbnd,
-        double shift)
-    : shift(shift)
+        Array<double> &dirbnd)
 {
     Flags flags_fes;
     flags_fes.SetFlag("order", 2);
@@ -28,22 +25,11 @@ ElasticityFESetup::ElasticityFESetup(
                            InnerProduct(0.5 * (u->Deriv() + TransposeCF(u->Deriv())),
                                         0.5 * (v->Deriv() + TransposeCF(v->Deriv())))
                            + material.lam * InnerProduct(divu, divv)
-                           + shift * material.rho * InnerProduct(u, v)
                            , VOL, VOL));
 
     bfm = make_shared<T_BilinearFormSymmetric<Complex>> (fes, "m", fes->GetFlags());
     bfm->AddIntegrator(make_shared<SymbolicBilinearFormIntegrator>(
                            material.rho * InnerProduct(u, v), VOL, VOL));
-
-    LocalHeap lh(10000000);
-
-    bfa->Assemble(lh);
-    bfm->Assemble(lh);
-}
-
-double ElasticityFESetup::getShift()
-{
-    return shift;
 }
 
 std::shared_ptr<VectorH1FESpace> &ElasticityFESetup::getFes()
@@ -51,12 +37,14 @@ std::shared_ptr<VectorH1FESpace> &ElasticityFESetup::getFes()
     return fes;
 }
 
-std::shared_ptr<BaseMatrix> ElasticityFESetup::getBfaMatrix()
+std::shared_ptr<T_BilinearFormSymmetric<Complex>> ElasticityFESetup::getBfaMatrix()
 {
-    return bfa->GetMatrixPtr();
+    //return bfa->GetMatrixPtr();
+    return bfa;
 }
 
-std::shared_ptr<BaseMatrix> ElasticityFESetup::getBfmMatrix()
+std::shared_ptr<T_BilinearFormSymmetric<Complex>> ElasticityFESetup::getBfmMatrix()
 {
-    return bfm->GetMatrixPtr();
+    //return bfm->GetMatrixPtr();
+    return bfm;
 }

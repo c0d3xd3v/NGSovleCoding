@@ -4,12 +4,19 @@
         <file>color_theme.xml</file>
         <file>icons/openfile.svg</file>
         <file>InstantRendering.qml</file>
-        <file>MeshPane.qml</file>
         <file>MainToolbar.qml</file>
         <file>icons/arrow_back.svg</file>
         <file>icons/close.svg</file>
         <file>icons/vectorpaint.svg</file>
         <file>SidePanel.qml</file>
         <file>RenderScene.qml</file>
+        <file>icons/openfile.png</file>
+        <file>MeshPane2.qml</file>
+        <file>MeshPane/MeshPaneHeader.qml</file>
+        <file>MeshPane/MeshPaneHorizontalSeparator.qml</file>
+        <file>MeshPane/MeshPanePageSwipe.qml</file>
+        <file>MeshPane/MeshPanePageSelect.qml</file>
+        <file>MeshPane/TetWildControl.qml</file>
+        <file>MeshPane/MeshRenderingControl.qml</file>
     </qresource>
 </RCC>

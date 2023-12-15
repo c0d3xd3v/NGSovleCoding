@@ -4,7 +4,10 @@
 #include <igl/read_triangle_mesh.h>
 
 #include "Ui/vtkorientationindicator.h"
-#include "vtkqtcontroller.h"
+#include "Ui/vtkqtcontroller.h"
+
+#include <Eigen/Eigen>
+#include <Eigen/Core>
 
 VtkQtController::VtkQtController(QObject *parent)
     : QObject{parent}
@@ -62,7 +65,7 @@ void VtkQtController::init(QQuickVTKRenderItem* qquickvtkItem, vtkRenderer *rend
         renderer->SetGradientBackground(true);
 
         selectionStyle = vtkSmartPointer<MouseInteractorStyle>::New();
-        selectionStyle->setMeshRenderController(&meshRenderController);
+        //selectionStyle->setMeshRenderController(&meshRenderController);
         selectionStyle->SetDefaultRenderer(renderer);
         interactor->SetInteractorStyle(selectionStyle);
     }
@@ -74,18 +77,19 @@ void VtkQtController::resize(int width, int height)
     {
         om->SetViewport(0.0, 0.0, 100.0/float(width), 100.0/float(height));
         om->Modified();
-        renderer->Modified();
-        renderWindow->Modified();
-        interactor->Modified();
+        //renderer->Modified();
+        //renderWindow->Modified();
+        //interactor->Modified();
         qquickvtkItem->update();
-        if(qquickvtkItem->window())
-        qquickvtkItem->window()->update();
+        //if(qquickvtkItem->window())
+        //qquickvtkItem->window()->update();
     }
 }
 
-QString VtkQtController::loadFile(QString filepath)
+QmlPaneMeshInterface* VtkQtController::loadFile(QString filepath)
 {
-    QString hashString;
+    //QString hashString;
+    QmlPaneMeshInterface* paneMeshInterface = new QmlPaneMeshInterface();
     const QUrl url(filepath);
     if (url.isLocalFile())
     {
@@ -100,30 +104,33 @@ QString VtkQtController::loadFile(QString filepath)
         {
             MeshRenderController* mc = new MeshRenderController(V, F);
 
-            std::stringstream ss;
-            ss << mc->getActor();
+            //std::stringstream ss;
+            //ss << mc->getActor();
 
-            typedef std::pair<std::string, MeshRenderController*> pair;
-            meshRenderController.insert(pair(ss.str(), mc));
+            //typedef std::pair<std::string, MeshRenderController*> pair;
+            //meshRenderController.insert(pair(ss.str(), mc));
 
-            hashString = ss.str().c_str();
+            //hashString = ss.str().c_str();
 
             renderer->AddActor(mc->getActor());
             renderer->ResetCamera();
+
+            paneMeshInterface->set(mc);
         }
         std::setlocale(LC_NUMERIC, oldLocale.c_str());
     }
-    return hashString;
+    return paneMeshInterface;
 }
 
 void VtkQtController::removeObject(QString hashString)
 {
-    typedef std::map<std::string, MeshRenderController*>::iterator Iterator;
-    Iterator itr = meshRenderController.find(hashString.toStdString());
-    if(itr != meshRenderController.end())
+    vtkActorCollection* ac = renderer->GetActors();
+    for(int i = 0; i < ac->GetNumberOfItems(); i++)
     {
-        renderer->RemoveActor(itr->second->getActor());
-        delete itr->second;
-        meshRenderController.erase(itr);
+        std::stringstream ss;
+        ss << ac->GetItemAsObject(i);
+        if(hashString == QString(ss.str().c_str())){
+            renderer->RemoveActor((vtkActor *)ac->GetItemAsObject(i));
+        }
     }
 }

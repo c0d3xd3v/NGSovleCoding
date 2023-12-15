@@ -1,30 +1,71 @@
-#include <igl/writeOBJ.h>
+#define EIGEN_DONT_VECTORIZE
+#include <memory>
 
-#include "Meshing/tettools.h"
-#include "Ui/instantrendering.h"
+#include <QApplication>
+#include <QPushButton>
 
-int main (int argc, char ** argv)
+#include <igl/read_triangle_mesh.h>
+
+#include <floattetwild/ftetwildwrapper.h>
+#include <floattetwild/tetrahedralize.hpp>
+
+class Test {
+private:
+    //wildmeshing_binding::Tetrahedralizer* tetra;
+public:
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    void test()
+    {
+        const std::string oldLocale = std::setlocale(LC_NUMERIC, nullptr);
+        std::setlocale(LC_NUMERIC, "C");
+
+        std::string path = "../../data/ridex-Body004.obj";
+
+        Eigen::MatrixXf V;
+        Eigen::MatrixXi F;
+        igl::read_triangle_mesh(path, V, F);
+/*
+        std::vector<double> epsr_tags;
+        wildmeshing_binding::Tetrahedralizer* tetra = new wildmeshing_binding::Tetrahedralizer();
+        tetra->load_mesh(path, "", epsr_tags);
+        //tetra->set_mesh(V, F, epsr_tags);
+        tetra->tetrahedralize();
+        Eigen::MatrixXd P, flags;
+        Eigen::MatrixXi T;
+        Eigen::Matrix<int, Eigen::Dynamic, 3> Ft;
+        tetra->get_tet_mesh(false, false, false, false, false, false, P, T, flags);
+        tetra->get_surface_triangles(Ft);
+        //tetra->save("ridex-Body004.msh", false, false, false, false, false, false, false);
+        delete tetra;
+*/
+
+        FTetWildWrapper* ftetwildWrapper = new FTetWildWrapper();
+        ftetwildWrapper->loadMeshGeometry(V, F);
+
+        std::setlocale(LC_NUMERIC, oldLocale.c_str());
+    }
+};
+
+int main(int argc, char** argv)
 {
-    std::string path = argv[1]; //"/home/kai/Development/github/FloatTetwild/build/ridex-Body004.obj_.msh";
-    std::cout << "path : " << path << std::endl;
 
-    Eigen::MatrixXf nodes;
-    Eigen::MatrixXi tris;
-    Eigen::MatrixXi tets;
-    loadMSH(path, nodes, tris, tets);
-    netgen::Mesh *mesh = generateNGMesh(nodes, tris, tets);
+    std::cout << "EIGEN_WORLD_VERSION : " << EIGEN_WORLD_VERSION << std::endl;
+    std::cout << "EIGEN_MAJOR_VERSION : " << EIGEN_MAJOR_VERSION << std::endl;
+    std::cout << "EIGEN_WORLD_VERSION : " << EIGEN_MINOR_VERSION << std::endl;
 
-    std::cout << "CheckVolumeMesh : " << mesh->CheckVolumeMesh() << std::endl;
-    std::cout << "points : " << nodes.rows() << std::endl;
-    std::cout << "tets   : " << tets.rows() << std::endl;
-    std::cout << "tris   : " << tris.rows() << std::endl;
+    QApplication app(argc, argv);
+/*
+    const std::string oldLocale = std::setlocale(LC_NUMERIC, nullptr);
+    std::setlocale(LC_NUMERIC, "C");
+    std::string path = "../../data/ridex-Body004.obj";
+    Eigen::MatrixXf V;
+    Eigen::MatrixXi F;
+    igl::read_triangle_mesh(path, V, F);
+    std::setlocale(LC_NUMERIC, oldLocale.c_str());
+*/
+    QPushButton btn;
+    btn.show();
+    btn.connect(&btn, &QPushButton::clicked, [=](){Test test; test.test();});
 
-    igl::writeOBJ("test.obj", nodes, tris);
-    mesh->Save("test.vol");
-
-    delete mesh;
-
-    renderTriangleMesh(nodes, tris);
-
-    return 0;
+    return app.exec();
 }

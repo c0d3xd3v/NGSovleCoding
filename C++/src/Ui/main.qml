@@ -19,9 +19,11 @@ ApplicationWindow
 
     function loadMesh(path)
     {
-        var hashString = vtkqtcontroller.loadFile(path);
+        var mesh_controller = vtkqtcontroller.loadFile(path);
+        var hashString = mesh_controller.getHashString();
         var comp = Qt.createComponent("MeshPane.qml");
-        sidePanel.loadedMeshesListModel.append({"hashString" : hashString})
+        console.log(sidePanel.loadedMeshesListModel)
+        sidePanel.loadedMeshesListModel.append({"hashString" : hashString, "mesh_controller" : mesh_controller})
     }
 
     FileDialog {

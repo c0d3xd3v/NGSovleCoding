@@ -22,6 +22,7 @@
         "spectral_clustering_test.py",
         "test_convert_msh_to_vol.py",
         "test_partitioning.py",
+        "test_point_ids.py",
         "test_tetwild.py",
         "vibroacoustic2d.py"
     ]

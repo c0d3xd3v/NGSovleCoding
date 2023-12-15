@@ -9,7 +9,13 @@
 #include <vtk/vtkRenderWindowInteractor.h>
 
 #include "Ui/vtkqtcontroller.h"
+#include "Ui/qmlpanemeshinterface.h"
 #include "Ui/meshrendercontroller.h"
+
+static void registerQmlTypes() {
+    qRegisterMetaType<QmlPaneMeshInterface*>("QmlPaneMeshInterface");
+}
+Q_COREAPP_STARTUP_FUNCTION(registerQmlTypes)
 
 int main (int argc, char ** argv)
 {

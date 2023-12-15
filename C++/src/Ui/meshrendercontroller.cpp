@@ -10,8 +10,27 @@
 
 #include "meshrendercontroller.h"
 
-MeshRenderController::MeshRenderController(Eigen::MatrixXf &nodes, Eigen::MatrixXi &tris)
+#include <floattetwild/tetrahedralize.hpp>
+#include <floattetwild/ftetwildwrapper.h>
+#include <igl/read_triangle_mesh.h>
+
+
+MeshRenderController::MeshRenderController(Eigen::MatrixXf &nodes, Eigen::MatrixXi &tris) :
+    nodes(nodes), tris(tris)
 {
+/*
+    FTetWildWrapper* ftetwildWrapper = new FTetWildWrapper();
+    ftetwildWrapper->loadMeshGeometry(nodes, tris);
+    ftetwildWrapper->tetrahedralize();
+    ftetwildWrapper->save();
+    Eigen::MatrixXi tris_;
+    Eigen::MatrixXi tets_;
+    Eigen::MatrixXf nodes_;
+    ftetwildWrapper->getSurfaceIndices(tris_, tets_, nodes_);
+
+    nodes = nodes_;
+    tris = tris_;
+*/
     points = vtkSmartPointer<vtkPoints>::New();
     cells = vtkSmartPointer<vtkCellArray>::New();
     mesh = vtkSmartPointer<vtkPolyData>::New();
@@ -58,6 +77,7 @@ MeshRenderController::MeshRenderController(Eigen::MatrixXf &nodes, Eigen::Matrix
 
     meshGraph = nullptr;
     buildMeshGraph();
+
 /*
     vtkNew<vtkNamedColors> colors;
     // Color temp. 5400k.
@@ -74,7 +94,6 @@ MeshRenderController::MeshRenderController(Eigen::MatrixXf &nodes, Eigen::Matrix
 */
     mapper->SetInputData(mesh);
     actor->SetMapper(mapper);
-    //actor->GetProperty()->EdgeVisibilityOn();
 }
 
 void MeshRenderController::selectCell(vtkIdType vtkId)
@@ -152,6 +171,22 @@ void MeshRenderController::setColormap(ColorMap cm)
     mapper->SetLookupTable(cm.ctf);
 }
 
+void MeshRenderController::domeshing(double stop_energy, double rel_edge_length, double rel_eps)
+{
+    FTetWildWrapper* ftetwildWrapper = new FTetWildWrapper(stop_energy, rel_edge_length, rel_eps);
+    ftetwildWrapper->loadMeshGeometry(nodes, tris);
+    ftetwildWrapper->tetrahedralize();
+    ftetwildWrapper->save();
+    Eigen::MatrixXi tris_;
+    Eigen::MatrixXi tets_;
+    Eigen::MatrixXf nodes_;
+    ftetwildWrapper->getSurfaceIndices(tris_, tets_, nodes_);
+    std::cout << "tris : " << tris_.rows() << std::endl;
+    std::cout << "tets : " << tets_.rows() << std::endl;
+    std::cout << "nods : " << nodes_.rows() << std::endl;
+    delete ftetwildWrapper;
+}
+
 vtkActor *MeshRenderController::getActor()
 {
     return actor;
@@ -160,4 +195,14 @@ vtkActor *MeshRenderController::getActor()
 vtkSmartPointer<vtkPolyData> MeshRenderController::getPolydata()
 {
     return mesh;
+}
+
+void MeshRenderController::renderSurfaceWithEdges()
+{
+    actor->GetProperty()->EdgeVisibilityOn();
+}
+
+void MeshRenderController::renderSurface()
+{
+    actor->GetProperty()->EdgeVisibilityOff();
 }

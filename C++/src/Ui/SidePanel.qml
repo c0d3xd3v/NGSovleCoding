@@ -1,4 +1,3 @@
-// import related modules
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.3
@@ -15,34 +14,49 @@ Drawer {
 
     property var loadedMeshesListModel: ListModel {}
 
-    Pane {
+    Frame {
         id: sidePane
         anchors.fill: parent
         padding: 0
         clip: true
 
         MainToolbar{id:toolbar}
-
-        ListView {
-            leftMargin: 3
-            rightMargin: 3
-            topMargin: 3
-            bottomMargin: 3
+        ColumnLayout {
             anchors.top: toolbar.bottom
-            anchors.right: parent.right
-            anchors.left: parent.left
-            anchors.bottom: parent.bottom
-            id: loadedMeshesList
-            clip: true
-            spacing: 3
-            delegate: MeshPane {}
-            model: loadedMeshesListModel
+            Layout.preferredHeight: drawer.height
+            ListView {
+                leftMargin: 3
+                rightMargin: 3
+                topMargin: 3
+                bottomMargin: 3
+                Layout.fillHeight: true
+                Layout.preferredHeight: sidePane.height - toolbar.height
+                Layout.preferredWidth: sidePane.width
+                highlight: Rectangle {
+                    opacity: 1.0;
+                    color: "transparent";
+                    border.color: "lightsteelblue";
+                    border.width: 1.5;
+                    radius: 0
+                }
+                id: loadedMeshesList
+                clip: true
+                boundsBehavior: Flickable.StopAtBounds
+                spacing: 3
+                delegate:  MeshPane2 {
+                    Layout.preferredHeight: 210
+                    width: parent.width
+                    onHasFocus: {
+                        loadedMeshesList.currentIndex = index
+                    }
+                }
+                model: loadedMeshesListModel
+            }
         }
     }
 
     function deleteMesh(hashString, pane)
     {
-        console.log("delete mesh " + hashString)
         vtkqtcontroller.removeObject(hashString)
         loadedMeshesListModel.remove(pane)
     }

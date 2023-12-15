@@ -14,6 +14,7 @@
 #include <vtk/QQuickVTKRenderItem.h>
 
 #include "Ui/meshrendercontroller.h"
+#include "Ui/qmlpanemeshinterface.h"
 #include "Ui/cellpicking.h"
 
 class VtkQtController : public QObject
@@ -27,9 +28,10 @@ private:
     vtkRenderWindow *renderWindow;
     vtkRenderWindowInteractor *interactor;
     vtkSmartPointer<vtkOrientationMarkerWidget> om;
-    std::map<std::string, MeshRenderController *> meshRenderController;
+    //std::map<std::string, MeshRenderController *> meshRenderController;
 
 public:
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
     explicit VtkQtController(QObject *parent = nullptr);
     void init(QQuickVTKRenderItem* qquickvtkItem,
               vtkRenderer* renderer,
@@ -38,7 +40,7 @@ public:
 
 public slots:
     void resize(int width, int height);
-    QString loadFile(QString filepath);
+    QmlPaneMeshInterface *loadFile(QString filepath);
     void removeObject(QString hashString);
 
 signals:

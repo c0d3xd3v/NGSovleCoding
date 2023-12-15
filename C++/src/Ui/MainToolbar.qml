@@ -17,7 +17,8 @@ ToolBar {
             flat: false
             icon.height: 32
             icon.width: 32
-            icon.source: "qrc:icons/openfile.svg"
+            icon.color: "transparent"
+            icon.source: "qrc:icons/openfile.png"
             onClicked: {
                 fileDialog.visible = true
                 fileDialog.sidebarVisible = false

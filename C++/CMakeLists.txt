@@ -35,11 +35,12 @@ find_package(VTK REQUIRED COMPONENTS
     RenderingFreeType
     RenderingGL2PSOpenGL2
     RenderingOpenGL2)
-find_package(Eigen3)
+include_directories(/home/kai/Development/github/FloatTetwild/3rdparty/libigl/external/eigen)
+#find_package(Eigen3)
 find_package(libigl)
 
-set(TETWILD_INCLUDE_DIR /home/kai/Development/libs/fTetWild/include/)
-set(TETWILD_LIB_DIR /home/kai/Development/libs/fTetWild/lib/)
+set(TETWILD_INCLUDE_DIR /home/kai/Development/libs/fTetWild/release/include/)
+set(TETWILD_LIB_DIR /home/kai/Development/libs/fTetWild/release/lib/)
 
 include_directories(src)
 include_directories(${EIGEN_INCLUDE_DIR})
@@ -47,6 +48,8 @@ include_directories(${VTK_INCLUDE_DIR})
 include_directories(${TETWILD_INCLUDE_DIR})
 include_directories(${TETWILD_INCLUDE_DIR}/geogram1)
 link_directories(${TETWILD_LIB_DIR})
+
+add_definitions(-DEIGEN_DONT_VECTORIZE)
 
 message("vtk libs : ${VTK_LIBRARIES}")
 
@@ -114,7 +117,7 @@ target_link_libraries(meshing
    Qt5::Widgets
    Qt5::QuickControls2
    ${VTK_LIBRARIES}
-   Eigen3::Eigen
+#   Eigen3::Eigen
    igl::igl_core
    ngcomp
    gmp
@@ -123,8 +126,8 @@ target_link_libraries(meshing
    fmt
    tbb_static
    geogram
-   FastEnvelope
-   IndirectPredicates
+#   FastEnvelope
+#   IndirectPredicates
 )
 
 add_executable(qvtktest
@@ -144,11 +147,14 @@ add_executable(qvtktest
     src/Ui/resources.qrc
     src/Ui/vtkqtcontroller.h
     src/Ui/vtkqtcontroller.cpp
+    src/Ui/qmlpanemeshinterface.h
+    src/Ui/qmlpanemeshinterface.cpp
     src/tinyxml2/tinyxml2.cpp
     src/tinyxml2/tinyxml2.h
     src/Meshing/graph.h
     src/Meshing/graph.cpp
-
+    src/Ui/meshingworker.h
+    src/Ui/meshingworker.cpp
 )
 
 target_link_libraries(qvtktest
@@ -166,6 +172,6 @@ target_link_libraries(qvtktest
     fmt
     tbb_static
     geogram
-    FastEnvelope
-    IndirectPredicates
+#    FastEnvelope
+#    IndirectPredicates
 )

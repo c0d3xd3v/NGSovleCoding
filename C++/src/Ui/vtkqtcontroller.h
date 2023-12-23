@@ -13,7 +13,7 @@
 #include <vtk/vtkOrientationMarkerWidget.h>
 #include <vtk/QQuickVTKRenderItem.h>
 
-#include "Ui/meshrendercontroller.h"
+#include "Ui/meshingcontroller.h"
 #include "Ui/qmlpanemeshinterface.h"
 #include "Ui/cellpicking.h"
 
@@ -41,7 +41,7 @@ public:
 public slots:
     void resize(int width, int height);
     QmlPaneMeshInterface *loadFile(QString filepath);
-    void removeObject(QString hashString);
+    void removeObject(QString hashString, QmlPaneMeshInterface* pane);
 
 signals:
 

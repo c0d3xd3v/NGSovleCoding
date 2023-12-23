@@ -13,9 +13,11 @@ RowLayout {
         flat: false
         icon.source: "qrc:/icons/close.svg"
         onClicked: {
+            //console.log(mesh_controller)
+            mesh_controller.cleanupRendering()
             deleteMesh(hashString, index)
         }
-        Component.onCompleted: {console.log(height);parent.height=height}
+        Component.onCompleted: {parent.height=height}
     }
     MouseArea{
         Layout.preferredHeight: clsBtn.height

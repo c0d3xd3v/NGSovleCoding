@@ -12,17 +12,17 @@
 #include <vtk/vtkCellPicker.h>
 #include <vtk/vtkExtractSelection.h>
 
-#include "meshrendercontroller.h"
+#include "meshingcontroller.h"
 
 class MouseInteractorStyle : public vtkInteractorStyleTrackballCamera
 {
 private:
-    std::map<std::string, MeshRenderController *> *meshRenderController;
+    std::map<std::string, MeshingController *> *meshRenderController;
 public:
     static MouseInteractorStyle* New();
     MouseInteractorStyle();
     virtual void OnLeftButtonDown() override;
-    void setMeshRenderController(std::map<std::string, MeshRenderController *> *newMeshRenderController);
+    void setMeshRenderController(std::map<std::string, MeshingController *> *newMeshRenderController);
 };
 
 #endif // CELLPICKING_H

@@ -3,7 +3,7 @@
 
 #include <QThread>
 
-class MeshRenderController;
+class MeshingController;
 
 class MeshingWorker : public QThread
 {
@@ -13,12 +13,12 @@ private:
     double stop_energy;
     double rel_edge_length;
     double rel_eps;
-    MeshRenderController* controller;
+    MeshingController* controller;
 public slots:
 signals:
     void resultReady();
 public:
-    MeshingWorker(MeshRenderController* controller, double stop_energy, double rel_edge_length, double rel_eps);
+    MeshingWorker(MeshingController* controller, double stop_energy, double rel_edge_length, double rel_eps);
 };
 
 #endif // MESHINGWORKER_H

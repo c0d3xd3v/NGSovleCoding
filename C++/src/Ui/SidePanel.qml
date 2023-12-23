@@ -45,7 +45,7 @@ Drawer {
                 spacing: 3
                 delegate:  MeshPane2 {
                     Layout.preferredHeight: 210
-                    width: parent.width
+                    width: if(parent) parent.width; else 1
                     onHasFocus: {
                         loadedMeshesList.currentIndex = index
                     }
@@ -57,7 +57,8 @@ Drawer {
 
     function deleteMesh(hashString, pane)
     {
-        vtkqtcontroller.removeObject(hashString)
         loadedMeshesListModel.remove(pane)
+        //console.log(pane.mesh_controller)
+        //vtkqtcontroller.removeObject(hashString, pane.mesh_controller)
     }
 }

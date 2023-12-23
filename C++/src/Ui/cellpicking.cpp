@@ -18,14 +18,14 @@ void MouseInteractorStyle::OnLeftButtonDown()
     {
         if(meshRenderController != nullptr)
         {
-            typedef std::map<std::string, MeshRenderController*>::iterator
+            typedef std::map<std::string, MeshingController*>::iterator
                 Iterator;
             std::stringstream ss;
             ss << picker->GetActor();
             Iterator itr = meshRenderController->find(ss.str());
             if(itr != meshRenderController->end())
             {
-                MeshRenderController* mrc = itr->second;
+                MeshingController* mrc = itr->second;
                 mrc->selectCell(picker->GetCellId());
             }
         }
@@ -33,7 +33,7 @@ void MouseInteractorStyle::OnLeftButtonDown()
     vtkInteractorStyleTrackballCamera::OnLeftButtonDown();
 }
 
-void MouseInteractorStyle::setMeshRenderController(std::map<std::string, MeshRenderController *> *newMeshRenderController)
+void MouseInteractorStyle::setMeshRenderController(std::map<std::string, MeshingController *> *newMeshRenderController)
 {
     meshRenderController = newMeshRenderController;
 }

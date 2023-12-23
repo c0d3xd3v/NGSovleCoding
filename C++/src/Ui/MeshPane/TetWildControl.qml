@@ -14,12 +14,6 @@ Item {
         }
         ColumnLayout{
             anchors.fill: parent
-            /*
-            Item {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-            }
-            */
             GridLayout {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
@@ -31,6 +25,7 @@ Item {
                     id:stop_energy
                     Layout.fillWidth: true
                     placeholderText: "10"
+                    text: "10"
                 }
                 Label{
                     text:"rel. edge length"
@@ -39,6 +34,7 @@ Item {
                     id:rel_edge
                     Layout.fillWidth: true
                     placeholderText: "0.05"
+                    text: "0.05"
                 }
                 Label{
                     text:"rel. epsilon"
@@ -47,16 +43,30 @@ Item {
                     id: rel_eps
                     Layout.fillWidth: true
                     placeholderText: "0.001"
+                    text: "0.001"
                 }
             }
             Button {
+                id: startBTN
                 Layout.fillWidth: true
                 text: "start meshing"
+                BusyIndicator {
+                    id: busyIndicator
+                    anchors.fill: startBTN
+                    running: true
+                    visible: false
+                }
                 onClicked: {
                     var se = parseFloat(stop_energy.text);
                     var rel = parseFloat(rel_edge.text);
                     var reps = parseFloat(rel_eps.text);
-                    console.log(se)
+                    startBTN.enabled = false
+                    busyIndicator.visible = true
+                    mesh_controller.onMeshingFinished.connect(function(){
+                        console.log("ready")
+                        busyIndicator.visible = false
+                        startBTN.enabled = true
+                    })
                     mesh_controller.doMeshing(se, rel, reps);
                 }
             }

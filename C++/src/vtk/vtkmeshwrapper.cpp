@@ -8,29 +8,12 @@
 #include <vtk/vtkCell.h>
 #include <vtk/vtkNamedColors.h>
 
-#include "meshrendercontroller.h"
 
-#include <floattetwild/tetrahedralize.hpp>
-#include <floattetwild/ftetwildwrapper.h>
-#include <igl/read_triangle_mesh.h>
+#include "vtkmeshwrapper.h"
 
 
-MeshRenderController::MeshRenderController(Eigen::MatrixXf &nodes, Eigen::MatrixXi &tris) :
-    nodes(nodes), tris(tris)
+VtkMeshWrapper::VtkMeshWrapper(Eigen::MatrixXf &nodes, Eigen::MatrixXi &tris)
 {
-/*
-    FTetWildWrapper* ftetwildWrapper = new FTetWildWrapper();
-    ftetwildWrapper->loadMeshGeometry(nodes, tris);
-    ftetwildWrapper->tetrahedralize();
-    ftetwildWrapper->save();
-    Eigen::MatrixXi tris_;
-    Eigen::MatrixXi tets_;
-    Eigen::MatrixXf nodes_;
-    ftetwildWrapper->getSurfaceIndices(tris_, tets_, nodes_);
-
-    nodes = nodes_;
-    tris = tris_;
-*/
     points = vtkSmartPointer<vtkPoints>::New();
     cells = vtkSmartPointer<vtkCellArray>::New();
     mesh = vtkSmartPointer<vtkPolyData>::New();
@@ -78,25 +61,11 @@ MeshRenderController::MeshRenderController(Eigen::MatrixXf &nodes, Eigen::Matrix
     meshGraph = nullptr;
     buildMeshGraph();
 
-/*
-    vtkNew<vtkNamedColors> colors;
-    // Color temp. 5400k.
-    colors->SetColor("HighNoonSun", 1.0, 1.0, .9843, 1.0);
-    // Color temp. 2850k.
-    colors->SetColor("100W Tungsten", 1.0, .8392, .6667, 1.0);
-    actor->GetProperty()->SetSpecular(0.51);
-    actor->GetProperty()->SetDiffuse(0.7);
-    actor->GetProperty()->SetAmbient(0.7);
-    actor->GetProperty()->SetSpecularPower(30.0);
-    actor->GetProperty()->SetOpacity(1.0);
-    actor->GetProperty()->SetAmbientColor(
-        colors->GetColor3d("SaddleBrown").GetData());
-*/
     mapper->SetInputData(mesh);
     actor->SetMapper(mapper);
 }
 
-void MeshRenderController::selectCell(vtkIdType vtkId)
+void VtkMeshWrapper::selectCell(vtkIdType vtkId)
 {
     meshGraph->reset();
     std::vector<vtkIdType> gids = meshGraph->BFS(vtkId);
@@ -112,7 +81,7 @@ void MeshRenderController::selectCell(vtkIdType vtkId)
     mapper->UpdateDataObject();
 }
 
-void MeshRenderController::initGrouppingCellData(vtkSmartPointer<vtkPolyData> polydata)
+void VtkMeshWrapper::initGrouppingCellData(vtkSmartPointer<vtkPolyData> polydata)
 {
     vtkNew<vtkFloatArray> tgroupping;
     tgroupping->SetNumberOfComponents(1);
@@ -125,7 +94,7 @@ void MeshRenderController::initGrouppingCellData(vtkSmartPointer<vtkPolyData> po
     polydata->GetCellData()->SetScalars(tgroupping);
 }
 
-void MeshRenderController::buildMeshGraph()
+void VtkMeshWrapper::buildMeshGraph()
 {
     vtkSmartPointer<vtkPolyData> meshData = triangleFilter->GetOutput();
     vtkIdType nbrOfCells = meshData->GetNumberOfCells();
@@ -157,7 +126,7 @@ void MeshRenderController::buildMeshGraph()
     }
 }
 
-bool MeshRenderController::compare(vtkIdType f1, vtkIdType f2)
+bool VtkMeshWrapper::compare(vtkIdType f1, vtkIdType f2)
 {
     vtkDataArray* normalDataFloat = polynormals->GetOutput()->GetCellData()->GetNormals();
     Eigen::Vector3d n1(normalDataFloat->GetTuple3(f1));
@@ -166,43 +135,48 @@ bool MeshRenderController::compare(vtkIdType f1, vtkIdType f2)
     return (n1.dot(n2) >= threshold);
 }
 
-void MeshRenderController::setColormap(ColorMap cm)
+void VtkMeshWrapper::setColormap(ColorMap cm)
 {
     mapper->SetLookupTable(cm.ctf);
 }
 
-void MeshRenderController::domeshing(double stop_energy, double rel_edge_length, double rel_eps)
-{
-    FTetWildWrapper* ftetwildWrapper = new FTetWildWrapper(stop_energy, rel_edge_length, rel_eps);
-    ftetwildWrapper->loadMeshGeometry(nodes, tris);
-    ftetwildWrapper->tetrahedralize();
-    ftetwildWrapper->save();
-    Eigen::MatrixXi tris_;
-    Eigen::MatrixXi tets_;
-    Eigen::MatrixXf nodes_;
-    ftetwildWrapper->getSurfaceIndices(tris_, tets_, nodes_);
-    std::cout << "tris : " << tris_.rows() << std::endl;
-    std::cout << "tets : " << tets_.rows() << std::endl;
-    std::cout << "nods : " << nodes_.rows() << std::endl;
-    delete ftetwildWrapper;
-}
-
-vtkActor *MeshRenderController::getActor()
+vtkActor *VtkMeshWrapper::getActor()
 {
     return actor;
 }
 
-vtkSmartPointer<vtkPolyData> MeshRenderController::getPolydata()
+vtkSmartPointer<vtkPolyData> VtkMeshWrapper::getPolydata()
 {
     return mesh;
 }
 
-void MeshRenderController::renderSurfaceWithEdges()
+void VtkMeshWrapper::renderSurfaceWithEdges()
 {
     actor->GetProperty()->EdgeVisibilityOn();
 }
 
-void MeshRenderController::renderSurface()
+bool VtkMeshWrapper::getRenderSurfaceWidthEdges()
+{
+    return actor->GetProperty()->GetEdgeVisibility();
+}
+
+void VtkMeshWrapper::renderSurface()
 {
     actor->GetProperty()->EdgeVisibilityOff();
 }
+
+bool VtkMeshWrapper::getRenderSurface()
+{
+    return !actor->GetProperty()->GetEdgeVisibility();
+}
+
+void VtkMeshWrapper::visibilityOff()
+{
+    actor->VisibilityOff();
+}
+
+void VtkMeshWrapper::visibilityOn()
+{
+    actor->VisibilityOn();
+}
+

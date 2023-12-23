@@ -89,7 +89,7 @@ void VtkQtController::resize(int width, int height)
 QmlPaneMeshInterface* VtkQtController::loadFile(QString filepath)
 {
     //QString hashString;
-    QmlPaneMeshInterface* paneMeshInterface = new QmlPaneMeshInterface();
+    QmlPaneMeshInterface* paneMeshInterface = new QmlPaneMeshInterface(renderer);
     const QUrl url(filepath);
     if (url.isLocalFile())
     {
@@ -102,7 +102,7 @@ QmlPaneMeshInterface* VtkQtController::loadFile(QString filepath)
         Eigen::MatrixXi F;
         if(igl::read_triangle_mesh(path, V, F))
         {
-            MeshRenderController* mc = new MeshRenderController(V, F);
+            MeshingController* mc = new MeshingController(V, F);
 
             //std::stringstream ss;
             //ss << mc->getActor();
@@ -116,13 +116,14 @@ QmlPaneMeshInterface* VtkQtController::loadFile(QString filepath)
             renderer->ResetCamera();
 
             paneMeshInterface->set(mc);
+            paneMeshInterface->setParent(mc);
         }
         std::setlocale(LC_NUMERIC, oldLocale.c_str());
     }
     return paneMeshInterface;
 }
 
-void VtkQtController::removeObject(QString hashString)
+void VtkQtController::removeObject(QString hashString, QmlPaneMeshInterface *pane)
 {
     vtkActorCollection* ac = renderer->GetActors();
     for(int i = 0; i < ac->GetNumberOfItems(); i++)

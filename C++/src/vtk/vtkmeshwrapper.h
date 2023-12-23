@@ -1,10 +1,7 @@
-#ifndef MESHRENDERCONTROLLER_H
-#define MESHRENDERCONTROLLER_H
+#ifndef VTKMESHWRAPPER_H
+#define VTKMESHWRAPPER_H
 
-
-#include <QObject>
 #include <Eigen/Dense>
-#include <Eigen/Sparse>
 
 #include <vtk/vtkSmartPointer.h>
 #include <vtk/vtkActor.h>
@@ -17,18 +14,12 @@
 #include <vtk/vtkTriangleFilter.h>
 #include <vtk/vtkPolyDataNormals.h>
 
-#include "colormaphelper.h"
+#include "Ui/colormaphelper.h"
 #include "Meshing/graph.h"
-#include <floattetwild/ftetwildwrapper.h>
 
-class MeshRenderController : public QObject, public GraphCompareCondition
+class VtkMeshWrapper : public GraphCompareCondition
 {
-    Q_OBJECT
 private:
-    //EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-    FTetWildWrapper* ftetwildWrapper;
-    Eigen::MatrixXf nodes;
-    Eigen::MatrixXi tris;
     vtkSmartPointer<vtkPoints> points;
     vtkSmartPointer<vtkCellArray> cells;
     vtkSmartPointer<vtkPolyData> mesh;
@@ -37,24 +28,24 @@ private:
     vtkSmartPointer<vtkPolyDataMapper> mapper;
     vtkSmartPointer<vtkActor> actor;
 
-    //Eigen::SparseMatrix<int> adjacency;
     Graph *meshGraph;
 
-    //std::list<vtkIdType> findCellNeighbours(vtkIdType id, Eigen::Vector3d &N, std::list<vtkIdType> &visited_non_neighbors);
     void initGrouppingCellData(vtkSmartPointer<vtkPolyData> polydata);
     void buildMeshGraph();
     bool compare(vtkIdType f1, vtkIdType f2);
 
 public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-    MeshRenderController(Eigen::MatrixXf &nodes, Eigen::MatrixXi &tris);
+    VtkMeshWrapper(Eigen::MatrixXf &nodes, Eigen::MatrixXi &tris);
     vtkActor *getActor();
     vtkSmartPointer<vtkPolyData> getPolydata();
     void selectCell(vtkIdType vtkId);
     void setColormap(ColorMap cm);
-    void domeshing(double stop_energy, double rel_edge_length, double rel_eps);
     void renderSurfaceWithEdges();
+    bool getRenderSurfaceWidthEdges();
     void renderSurface();
+    bool getRenderSurface();
+    void visibilityOff();
+    void visibilityOn();
 };
 
-#endif // MESHRENDERCONTROLLER_H
+#endif // VTKMESHWRAPPER_H

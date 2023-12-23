@@ -10,10 +10,10 @@
 
 #include "Ui/vtkqtcontroller.h"
 #include "Ui/qmlpanemeshinterface.h"
-#include "Ui/meshrendercontroller.h"
+#include "Ui/meshingcontroller.h"
 
 static void registerQmlTypes() {
-    qRegisterMetaType<QmlPaneMeshInterface*>("QmlPaneMeshInterface");
+    qRegisterMetaType<QmlPaneMeshInterface*>("QmlPaneMeshInterface*");
 }
 Q_COREAPP_STARTUP_FUNCTION(registerQmlTypes)
 
@@ -21,7 +21,7 @@ int main (int argc, char ** argv)
 {
     QQuickVTKRenderWindow::setupGraphicsBackend();
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-    QQuickStyle::setStyle("Fusion");
+    //QQuickStyle::setStyle("Fusion");
 
     QGuiApplication app(argc, argv);
 

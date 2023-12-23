@@ -22,7 +22,7 @@
 
 #include "vtkorientationindicator.h"
 #include "instantrendering.h"
-#include "meshrendercontroller.h"
+#include "meshingcontroller.h"
 #include "cellpicking.h"
 #include "colormaphelper.h"
 
@@ -92,7 +92,7 @@ int renderTriangleMesh(Eigen::MatrixXf &nodes, Eigen::MatrixXi &tris)
 
     //ColorMap cm = loadColorMapFromXML("color_theme.xml");
     ColorMap cm = loadIdColorMap(0, 6000);
-    MeshRenderController rc(nodes, tris);
+    MeshingController rc(nodes, tris);
     rc.setColormap(cm);
 
     // Set the custom stype to use for interaction.

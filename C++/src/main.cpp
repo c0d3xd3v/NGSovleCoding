@@ -21,7 +21,7 @@ int main (int argc, char ** argv)
 {
     QQuickVTKRenderWindow::setupGraphicsBackend();
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-    //QQuickStyle::setStyle("Fusion");
+    QQuickStyle::setStyle("Fusion");
 
     QGuiApplication app(argc, argv);
 

@@ -20,8 +20,10 @@ void QmlPaneMeshInterface::cleanupRendering()
 {
     controller->setCurrentMeshToResult();
     renderer->RemoveActor(controller->getActor());
+
     controller->setCurrentMeshToSource();
     renderer->RemoveActor(controller->getActor());
+
     setParent(nullptr);
     deleteLater();
 }
@@ -100,7 +102,8 @@ void QmlPaneMeshInterface::setVisualization(QString mode)
             controller->hideCurrentMesh();
             controller->setCurrentMeshToSource();
             controller->showCurrentMesh();
-        }else if(mode == "Result Mesh")
+        }
+        else if(mode == "Result Mesh")
         {
             controller->setCurrentMeshToSource();
             controller->hideCurrentMesh();

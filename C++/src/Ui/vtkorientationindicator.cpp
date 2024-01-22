@@ -1,11 +1,11 @@
 #include "vtkorientationindicator.h"
 
 
-#include <vtk/vtkProperty.h>
-#include <vtk/vtkConeSource.h>
-#include <vtk/vtkTextProperty.h>
-#include <vtk/vtkPolyDataMapper.h>
-#include <vtk/vtkCaptionActor2D.h>
+#include <vtkProperty.h>
+#include <vtkConeSource.h>
+#include <vtkTextProperty.h>
+#include <vtkPolyDataMapper.h>
+#include <vtkCaptionActor2D.h>
 
 
 vtkSmartPointer<vtkAxesActor> MakeAxesActor(std::array<double, 3>& scale/*,

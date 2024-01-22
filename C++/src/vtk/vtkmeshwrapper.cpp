@@ -1,12 +1,12 @@
 #include <Eigen/Dense>
 
-#include <vtk/vtkFloatArray.h>
-#include <vtk/vtkOrientationMarkerWidget.h>
-#include <vtk/vtkCellData.h>
-#include <vtk/vtkLookupTable.h>
-#include <vtk/vtkProperty.h>
-#include <vtk/vtkCell.h>
-#include <vtk/vtkNamedColors.h>
+#include <vtkFloatArray.h>
+#include <vtkOrientationMarkerWidget.h>
+#include <vtkCellData.h>
+#include <vtkLookupTable.h>
+#include <vtkProperty.h>
+#include <vtkCell.h>
+#include <vtkNamedColors.h>
 
 
 #include "vtkmeshwrapper.h"

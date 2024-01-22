@@ -6,12 +6,12 @@
 
 #include <QObject>
 
-#include <vtk/vtkRenderer.h>
-#include <vtk/vtkLight.h>
-#include <vtk/vtkRenderWindow.h>
-#include <vtk/vtkRenderWindowInteractor.h>
-#include <vtk/vtkOrientationMarkerWidget.h>
-#include <vtk/QQuickVTKRenderItem.h>
+#include <vtkRenderer.h>
+#include <vtkLight.h>
+#include <vtkRenderWindow.h>
+#include <vtkRenderWindowInteractor.h>
+#include <vtkOrientationMarkerWidget.h>
+#include <QQuickVTKRenderItem.h>
 
 #include "Ui/meshingcontroller.h"
 #include "Ui/qmlpanemeshinterface.h"

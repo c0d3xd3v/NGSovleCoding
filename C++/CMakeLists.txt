@@ -17,7 +17,7 @@ find_package(NGSolve CONFIG REQUIRED
   HINTS /home/kai/Development/libs/ngsolve/bin/.. $ENV{NETGENDIR}/..
 )
 
-find_package(Qt5 REQUIRED COMPONENTS Quick QuickControls2 Widgets Gui)
+find_package(Qt REQUIRED COMPONENTS Quick QuickControls2 Widgets Gui)
 find_package(VTK REQUIRED COMPONENTS
     GUISupportQtQuick
     CommonColor
@@ -160,10 +160,10 @@ add_executable(qvtktest
 )
 
 target_link_libraries(qvtktest
-    Qt5::Gui
-    Qt5::Quick
-    Qt5::Widgets
-    Qt5::QuickControls2
+    Qt::Gui
+    Qt::Quick
+    Qt::Widgets
+#    Qt::QuickControls2
     ${VTK_LIBRARIES}
     Eigen3::Eigen
     igl::igl_core
@@ -174,6 +174,7 @@ target_link_libraries(qvtktest
     fmt
     tbb_static
     geogram
+    omp
 #    FastEnvelope
 #    IndirectPredicates
 )

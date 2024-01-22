@@ -1,10 +1,10 @@
 #ifndef VTKORIENTATIONINDICATOR_H
 #define VTKORIENTATIONINDICATOR_H
 
-#include <vtk/vtkAxesActor.h>
-#include <vtk/vtkNamedColors.h>
-#include <vtk/vtkPropAssembly.h>
-#include <vtk/vtkAnnotatedCubeActor.h>
+#include <vtkAxesActor.h>
+#include <vtkNamedColors.h>
+#include <vtkPropAssembly.h>
+#include <vtkAnnotatedCubeActor.h>
 
 vtkSmartPointer<vtkAxesActor> MakeAxesActor(std::array<double, 3>& scale,
                                    std::array<std::string, 3> const& xyzLabels);

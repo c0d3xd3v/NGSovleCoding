@@ -3,8 +3,8 @@
 
 #include <string>
 
-#include <vtk/vtkColorTransferFunction.h>
-#include <vtk/vtkLookupTable.h>
+#include <vtkColorTransferFunction.h>
+#include <vtkLookupTable.h>
 
 typedef struct {
     vtkSmartPointer<vtkLookupTable> lut;

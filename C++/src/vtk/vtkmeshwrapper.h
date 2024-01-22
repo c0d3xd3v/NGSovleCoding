@@ -3,16 +3,16 @@
 
 #include <Eigen/Dense>
 
-#include <vtk/vtkSmartPointer.h>
-#include <vtk/vtkActor.h>
-#include <vtk/vtkPoints.h>
-#include <vtk/vtkTriangle.h>
-#include <vtk/vtkPolyData.h>
-#include <vtk/vtkPointData.h>
-#include <vtk/vtkCellArray.h>
-#include <vtk/vtkPolyDataMapper.h>
-#include <vtk/vtkTriangleFilter.h>
-#include <vtk/vtkPolyDataNormals.h>
+#include <vtkSmartPointer.h>
+#include <vtkActor.h>
+#include <vtkPoints.h>
+#include <vtkTriangle.h>
+#include <vtkPolyData.h>
+#include <vtkPointData.h>
+#include <vtkCellArray.h>
+#include <vtkPolyDataMapper.h>
+#include <vtkTriangleFilter.h>
+#include <vtkPolyDataNormals.h>
 
 #include "Ui/colormaphelper.h"
 #include "Meshing/graph.h"

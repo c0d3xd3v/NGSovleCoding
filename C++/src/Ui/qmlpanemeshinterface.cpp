@@ -1,6 +1,6 @@
 #include <QDebug>
 
-#include <vtk/vtkRenderer.h>
+#include <vtkRenderer.h>
 
 #include "Ui/meshingcontroller.h"
 #include "Ui/meshingworker.h"

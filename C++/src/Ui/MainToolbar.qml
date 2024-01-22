@@ -21,7 +21,7 @@ ToolBar {
             icon.source: "qrc:icons/openfile.png"
             onClicked: {
                 fileDialog.visible = true
-                fileDialog.sidebarVisible = false
+                //fileDialog.sidebarVisible = false
             }
         }
         Item {

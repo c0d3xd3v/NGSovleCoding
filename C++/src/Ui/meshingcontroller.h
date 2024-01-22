@@ -8,13 +8,13 @@
 
 #include <floattetwild/ftetwildwrapper.h>
 
-#include <vtk/vtkSmartPointer.h>
-#include <vtk/vtkActor.h>
-#include <vtk/vtkPoints.h>
-#include <vtk/vtkTriangle.h>
-#include <vtk/vtkPolyData.h>
-#include <vtk/vtkPointData.h>
-#include <vtk/vtkCellArray.h>
+#include <vtkSmartPointer.h>
+#include <vtkActor.h>
+#include <vtkPoints.h>
+#include <vtkTriangle.h>
+#include <vtkPolyData.h>
+#include <vtkPointData.h>
+#include <vtkCellArray.h>
 
 #include "colormaphelper.h"
 #include "Meshing/graph.h"

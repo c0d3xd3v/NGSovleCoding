@@ -2,11 +2,11 @@
 #include <QQmlApplicationEngine>
 #include <QQuickWindow>
 #include <QQmlContext>
-#include <QQuickStyle>
+//#include <QQuickStyle>
 
-#include <vtk/vtkRenderWindow.h>
-#include <vtk/QQuickVTKRenderItem.h>
-#include <vtk/vtkRenderWindowInteractor.h>
+#include <vtkRenderWindow.h>
+#include <QQuickVTKRenderItem.h>
+#include <vtkRenderWindowInteractor.h>
 
 #include "Ui/vtkqtcontroller.h"
 #include "Ui/qmlpanemeshinterface.h"
@@ -21,7 +21,7 @@ int main (int argc, char ** argv)
 {
     QQuickVTKRenderWindow::setupGraphicsBackend();
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-    QQuickStyle::setStyle("Fusion");
+    //QQuickStyle::setStyle("Fusion");
 
     QGuiApplication app(argc, argv);
 

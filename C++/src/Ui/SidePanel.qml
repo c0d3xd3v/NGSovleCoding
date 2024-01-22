@@ -46,7 +46,7 @@ Drawer {
                 delegate:  MeshPane2 {
                     Layout.preferredHeight: 210
                     width: if(parent) parent.width; else 1
-                    onHasFocus: {
+                    onHasFocus: function (index) {
                         loadedMeshesList.currentIndex = index
                     }
                 }

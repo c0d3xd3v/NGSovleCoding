@@ -3,7 +3,7 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.3
 import QtQuick.Window 2.15
-import QtQuick.Dialogs 1.3
+import QtQuick.Dialogs
 
 import "qrc:"
 
@@ -29,9 +29,9 @@ ApplicationWindow
     FileDialog {
         id: fileDialog
         title: "Please choose a file"
-        folder: shortcuts.home
+//        currentFolder: shortcuts.home
         nameFilters: ["surface mesh files (*.stl *.obj)"]
-        onAccepted: loadMesh(fileDialog.fileUrls)
+        onAccepted: loadMesh(fileDialog.currentFile)
     }
     onBeforeRendering: {
         var w = renderScene.renderSceneItem.width

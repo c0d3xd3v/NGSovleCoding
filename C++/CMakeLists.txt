@@ -7,15 +7,13 @@ cmake_policy(SET CMP0043 NEW)
 cmake_policy(SET CMP0020 NEW)
 cmake_policy(SET CMP0072 NEW)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-find_package(NGSolve CONFIG REQUIRED
-  HINTS /home/kai/Development/libs/ngsolve/bin/.. $ENV{NETGENDIR}/..
-)
+find_package(NGSolve CONFIG REQUIRED)
 
 find_package(Qt REQUIRED COMPONENTS Quick QuickControls2 Widgets Gui)
 find_package(VTK REQUIRED COMPONENTS
@@ -37,10 +35,14 @@ find_package(VTK REQUIRED COMPONENTS
     RenderingOpenGL2)
 include_directories(/home/kai/Development/github/FloatTetwild/3rdparty/libigl/external/eigen)
 #find_package(Eigen3)
-find_package(libigl)
+#find_package(libigl)
 
-set(TETWILD_INCLUDE_DIR /home/kai/Development/libs/fTetWild/release/include/)
-set(TETWILD_LIB_DIR /home/kai/Development/libs/fTetWild/release/lib/)
+
+set(TETWILD_ROOT $ENV{TETWILD_DIR})
+set(TETWILD_INCLUDE_DIR ${TETWILD_ROOT}/include/)
+set(TETWILD_LIB_DIR ${TETWILD_ROOT}/lib/)
+
+include_directories(${TETWILD_ROOT}/../3rdparty/include)
 
 include_directories(src)
 include_directories(${EIGEN_INCLUDE_DIR})
@@ -48,7 +50,7 @@ include_directories(${VTK_INCLUDE_DIR})
 include_directories(${TETWILD_INCLUDE_DIR})
 include_directories(${TETWILD_INCLUDE_DIR}/geogram1)
 link_directories(${TETWILD_LIB_DIR})
-
+include_directories(${TETWILD_ROOT}/../3rdparty/lib)
 add_definitions(-DEIGEN_DONT_VECTORIZE)
 
 message("vtk libs : ${VTK_LIBRARIES}")
@@ -144,6 +146,7 @@ add_executable(qvtktest
     src/Ui/colormaphelper.cpp
     src/Ui/cellpicking.h
     src/Ui/cellpicking.cpp
+    src/Ui/resources.qrc
     src/Ui/vtkqtcontroller.h
     src/Ui/vtkqtcontroller.cpp
     src/Ui/qmlpanemeshinterface.h
@@ -156,8 +159,6 @@ add_executable(qvtktest
     src/Ui/meshingworker.cpp
     src/vtk/vtkmeshwrapper.h
     src/vtk/vtkmeshwrapper.cpp
-
-    src/Ui/resources.qrc
 )
 
 target_link_libraries(qvtktest
@@ -167,15 +168,15 @@ target_link_libraries(qvtktest
 #    Qt::QuickControls2
     ${VTK_LIBRARIES}
 #    Eigen3::Eigen
-    igl::igl_core
+#    igl::igl_core
     ngstd
-    gmp
+#    gmp
     FloatTetwild
     predicates
-    fmt
+#    fmt
     tbb_static
     geogram
-    omp
-#    FastEnvelope
-#    IndirectPredicates
+#    omp
+    FastEnvelope
+    IndirectPredicates
 )

@@ -1,8 +1,8 @@
 // import related modules
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.3
-import QtQuick.Window 2.15
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import QtQuick.Window
 import QtQuick.Dialogs
 
 import "qrc:"

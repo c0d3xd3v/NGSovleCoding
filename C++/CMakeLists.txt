@@ -144,7 +144,6 @@ add_executable(qvtktest
     src/Ui/colormaphelper.cpp
     src/Ui/cellpicking.h
     src/Ui/cellpicking.cpp
-    src/Ui/resources.qrc
     src/Ui/vtkqtcontroller.h
     src/Ui/vtkqtcontroller.cpp
     src/Ui/qmlpanemeshinterface.h
@@ -157,6 +156,8 @@ add_executable(qvtktest
     src/Ui/meshingworker.cpp
     src/vtk/vtkmeshwrapper.h
     src/vtk/vtkmeshwrapper.cpp
+
+    src/Ui/resources.qrc
 )
 
 target_link_libraries(qvtktest
@@ -165,7 +166,7 @@ target_link_libraries(qvtktest
     Qt::Widgets
 #    Qt::QuickControls2
     ${VTK_LIBRARIES}
-    Eigen3::Eigen
+#    Eigen3::Eigen
     igl::igl_core
     ngstd
     gmp

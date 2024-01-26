@@ -90,8 +90,9 @@ def generateVibroAcousticDomain_(solidMesh, maxh):
     mesh.GenerateVolumeMesh(maxh=maxh)
     ngmesh = ngsolve.Mesh(mesh)
 
-    # print(ngmesh.GetMaterials())
-    # print(ngmesh.GetBoundaries())
-    # print(mesh.GetNDomains())
+    #print(ngmesh.GetMaterials())
+    #print(ngmesh.GetBoundaries())
+    #print(mesh.GetNDomains())
+    #print(mesh)
 
     return ngmesh

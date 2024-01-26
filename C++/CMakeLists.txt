@@ -14,7 +14,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
 find_package(NGSolve CONFIG REQUIRED)
-
+find_package(GMP)
 find_package(Qt REQUIRED COMPONENTS Quick QuickControls2 Widgets Gui)
 find_package(VTK REQUIRED COMPONENTS
     GUISupportQtQuick
@@ -43,6 +43,7 @@ set(TETWILD_INCLUDE_DIR ${TETWILD_ROOT}/include/)
 set(TETWILD_LIB_DIR ${TETWILD_ROOT}/lib/)
 
 include_directories(${TETWILD_ROOT}/../3rdparty/include)
+include_directories($ENV{IGL_INCLUDE_DIR})
 
 include_directories(src)
 include_directories(${EIGEN_INCLUDE_DIR})
@@ -170,13 +171,13 @@ target_link_libraries(qvtktest
 #    Eigen3::Eigen
 #    igl::igl_core
     ngstd
-#    gmp
+    gmp
     FloatTetwild
     predicates
-#    fmt
+    fmt
     tbb_static
     geogram
-#    omp
+    omp
     FastEnvelope
     IndirectPredicates
 )

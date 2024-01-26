@@ -93,7 +93,7 @@ QmlPaneMeshInterface* VtkQtController::loadFile(QString filepath)
     const QUrl url(filepath);
     if (url.isLocalFile())
     {
-        std::string path = url.path().toStdString();
+        std::string path = url.toLocalFile().toStdString();
 
         const std::string oldLocale = std::setlocale(LC_NUMERIC, nullptr);
         std::setlocale(LC_NUMERIC, "C");

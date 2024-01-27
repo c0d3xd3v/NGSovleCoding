@@ -13,8 +13,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
+if(WIN32)
+    find_package(GMP REQUIRED)
+else()
+    set(GMP_LIBRARIES gmp)
+endif()
 find_package(NGSolve CONFIG REQUIRED)
-find_package(GMP)
 find_package(Qt REQUIRED COMPONENTS Quick QuickControls2 Widgets Gui)
 find_package(VTK REQUIRED COMPONENTS
     GUISupportQtQuick
@@ -171,7 +175,7 @@ target_link_libraries(qvtktest
 #    Eigen3::Eigen
 #    igl::igl_core
     ngstd
-    gmp
+    ${GMP_LIBRARIES}
     FloatTetwild
     predicates
     fmt

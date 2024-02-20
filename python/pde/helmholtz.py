@@ -29,6 +29,6 @@ def solveHelmholtz(fes, gfu, roh=0.001):
     res = f.vec.CreateVector()
     res.data = f.vec - a.mat * gfu.vec
 
-    #gfu.vec.data += ngsolve.solvers.GMRes(a.mat, res, freedofs=fes.FreeDofs(), tol=1e-6, maxsteps=3000, restart=100, printrates=True)
-    gfu.vec.data += a.mat.Inverse(fes.FreeDofs(), inverse="sparsecholesky") * res
+    gfu.vec.data += ngsolve.solvers.GMRes(a.mat, res, freedofs=fes.FreeDofs(), tol=1e-6, maxsteps=3000, restart=100, printrates=True)
+    #gfu.vec.data += a.mat.Inverse(fes.FreeDofs(), inverse="sparsecholesky") * res
     return gfu

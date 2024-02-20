@@ -47,6 +47,7 @@ void QmlPaneMeshInterface::doMeshing(double stop_energy, double rel_edge_length,
             renderer->RemoveActor(controller->getActor());
         controller->setCurrentMeshToSource();
         controller->showCurrentMesh();
+        //controller->domeshing(stop_energy, rel_edge_length, rel_eps);
         MeshingWorker *workerThread = new MeshingWorker(controller, stop_energy, rel_edge_length, rel_eps);
         connect(workerThread, &MeshingWorker::resultReady, this, &QmlPaneMeshInterface::handleResults);
         connect(workerThread, &MeshingWorker::finished, workerThread, &QObject::deleteLater);

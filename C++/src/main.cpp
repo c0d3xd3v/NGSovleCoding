@@ -19,6 +19,8 @@ Q_COREAPP_STARTUP_FUNCTION(registerQmlTypes)
 
 int main (int argc, char ** argv)
 {
+    std::cout << "EIGEN_MAJOR_VERSION : " << EIGEN_MAJOR_VERSION << std::endl;
+    std::cout << "EIGEN_MINOR_VERSION : " << EIGEN_MINOR_VERSION << std::endl;
     QQuickVTKRenderWindow::setupGraphicsBackend();
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     //QQuickStyle::setStyle("Fusion");

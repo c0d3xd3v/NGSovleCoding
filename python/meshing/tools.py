@@ -49,26 +49,30 @@ def addDomain(mesh, domainMesh, fd):
         mesh.Add(Element2D(fd, [pmap[v] for v in e.vertices]))
     return mesh
 
-
-def addSurfaceFromLists(fds, mesh, points, tris):
+def addDomainSave(mesh, domainMesh, fd, fd_fixed):
     pmap = {}
-    for i, p in enumerate(points):
-        mp = MeshPoint(Point3d(p[0], p[1], p[2]))
-        pmap[i] = mesh.Add(mp)
-
-    for i, tri in enumerate(tris):
-        T = Element2D(fds, [pmap[v] for v in tri])
-        mesh.Add(T)
-
+    for e in domainMesh.Elements2D():
+        for v in e.vertices:
+            if v not in pmap:
+                pmap[v] = mesh.Add(domainMesh[v])
+    # copy surface elements from first mesh to new mesh
+    # we have to map point-numbers:
+    for e in domainMesh.Elements2D():
+        #fd = domainMesh.FaceDescriptors()[e.index]
+        if(e.index == 1):
+            mesh.Add(Element2D(fd_fixed, [pmap[v] for v in e.vertices]))
+        else:
+            mesh.Add(Element2D(fd, [pmap[v] for v in e.vertices]))
     return mesh
 
+def addSurfaceFromLists(fds, mesh, pmap, tris):
+    for i, tri in enumerate(tris):
+        vindices = [pmap[v] for v in tri]
+        T = Element2D(fds, vindices)
+        mesh.Add(T)
+    return mesh
 
-def addVolumeFromLists(index, mesh, points, tets):
-    pmap = {}
-    for i, p in enumerate(points):
-        mp = MeshPoint(Point3d(p[0], p[1], p[2]))
-        pmap[i] = mesh.Add(mp)
-
+def addVolumeFromLists(index, mesh, pmap, tets):
     for i, tet in enumerate(tets):
         vindices = [pmap[v] for v in tet]
         tmp = vindices[2]
@@ -76,5 +80,4 @@ def addVolumeFromLists(index, mesh, points, tets):
         vindices[3] = tmp
         T = Element3D(index, vindices)
         mesh.Add(T)
-
     return mesh

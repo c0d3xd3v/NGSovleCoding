@@ -3,22 +3,15 @@ from netgen.stl import *
 from netgen.meshing import *
 
 
-from VibroAcoustic import *
+from meshing.AcousticMesh import *
 from elasticity.eigenfrequencies import *
 from acoustic.boundarysourcesolver import *
 
-#ngsolve.MPI_Init()
+ngsolve.MPI_Init()
 
 path = '../build-C++-Imported_Kit-Debug/test.vol'
 
 #SetVisualization(clipping=True, clipnormal=tuple([0., 0., -1.]))
-
-#solidMesh_ = ngsolve.Mesh(path)
-#solidMesh = solidMesh_.ngmesh
-#solidMesh.SetMaterial(1, "solid")
-
-#mesh = generateVibroAcousticDomain_(solidMesh, maxh=20.0)
-#mesh.Save("mesh-test.vol")
 
 ngsmesh = ngsolve.Mesh("mesh-test.vol")
 solid_fes = VectorH1(ngsmesh, definedon="solid", order=2, complex=True)

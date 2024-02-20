@@ -19,6 +19,7 @@ else()
     set(GMP_LIBRARIES gmp)
 endif()
 find_package(NGSolve CONFIG REQUIRED)
+find_package(OpenMP REQUIRED)
 find_package(Qt REQUIRED COMPONENTS Quick QuickControls2 Widgets Gui)
 find_package(VTK REQUIRED COMPONENTS
     GUISupportQtQuick
@@ -37,7 +38,7 @@ find_package(VTK REQUIRED COMPONENTS
     RenderingFreeType
     RenderingGL2PSOpenGL2
     RenderingOpenGL2)
-include_directories(/home/kai/Development/github/FloatTetwild/3rdparty/libigl/external/eigen)
+#include_directories(/home/kai/Development/github/FloatTetwild/3rdparty/libigl/external/eigen)
 #find_package(Eigen3)
 #find_package(libigl)
 
@@ -88,56 +89,30 @@ set(SRC_PDE
 #    Eigen3::Eigen)
 
 
-# add_executable(meshing
-#    src/meshing.cpp
-#    src/Ui/vtksceneeventprocessor.h
-#    src/Ui/vtksceneeventprocessor.cpp
-#    src/Ui/vtkorientationindicator.h
-#    src/Ui/vtkorientationindicator.cpp
-#    src/Ui/instantrendering.h
-#    src/Ui/instantrendering.cpp
-#    src/Ui/meshingcontroller.h
-#    src/Ui/meshingcontroller.cpp
-#    src/Ui/cellpicking.h
-#    src/Ui/cellpicking.cpp
-#    src/Ui/resources.qrc
-#    src/Meshing/IOUtils.cpp
-#    src/Meshing/IOUtils.h
-#    src/Meshing/MshLoader.cpp
-#    src/Meshing/MshLoader.h
-#    src/Meshing/MshSaver.cpp
-#    src/Meshing/MshSaver.h
-#    src/Meshing/tettools.h
-#    src/Meshing/tettools.cpp
-#    src/tinyxml2/tinyxml2.cpp
-#    src/tinyxml2/tinyxml2.h
-#    src/Ui/colormaphelper.h
-#    src/Ui/colormaphelper.cpp
-#    src/Meshing/graph.h
-#    src/Meshing/graph.cpp
-#    src/vtk/vtkmeshwrapper.h
-#    src/vtk/vtkmeshwrapper.cpp
-# )
+add_executable(meshing
+   src/meshing.cpp
+   src/Meshing/IOUtils.cpp
+   src/Meshing/IOUtils.h
+   src/Meshing/MshLoader.cpp
+   src/Meshing/MshLoader.h
+   src/Meshing/MshSaver.cpp
+   src/Meshing/MshSaver.h
+   src/Meshing/tettools.h
+   src/Meshing/tettools.cpp
+)
 
-
-# target_link_libraries(meshing
-#    Qt5::Gui
-#    Qt5::Quick
-#    Qt5::Widgets
-#    Qt5::QuickControls2
-#    ${VTK_LIBRARIES}
-# #   Eigen3::Eigen
-#    igl::igl_core
-#    ngcomp
-#    gmp
-#    FloatTetwild
-#    predicates
-#    fmt
-#    tbb_static
-#    geogram
-# #   FastEnvelope
-# #   IndirectPredicates
-# )
+target_link_libraries(meshing
+   ngcomp
+   ${GMP_LIBRARIES}
+   OpenMP::OpenMP_CXX
+   FloatTetwild
+   predicates
+   fmt
+   tbb_static
+   geogram
+   FastEnvelope
+   IndirectPredicates
+)
 
 add_executable(qvtktest
     src/main.cpp
@@ -160,6 +135,14 @@ add_executable(qvtktest
     src/tinyxml2/tinyxml2.h
     src/Meshing/graph.h
     src/Meshing/graph.cpp
+    src/Meshing/IOUtils.cpp
+    src/Meshing/IOUtils.h
+    src/Meshing/MshLoader.cpp
+    src/Meshing/MshLoader.h
+    src/Meshing/MshSaver.cpp
+    src/Meshing/MshSaver.h
+    src/Meshing/tettools.h
+    src/Meshing/tettools.cpp
     src/Ui/meshingworker.h
     src/Ui/meshingworker.cpp
     src/vtk/vtkmeshwrapper.h
@@ -170,18 +153,16 @@ target_link_libraries(qvtktest
     Qt::Gui
     Qt::Quick
     Qt::Widgets
-#    Qt::QuickControls2
     ${VTK_LIBRARIES}
-#    Eigen3::Eigen
-#    igl::igl_core
-    ngstd
     ${GMP_LIBRARIES}
+    OpenMP::OpenMP_CXX
+    ngstd
+#    wildmeshing.so
     FloatTetwild
     predicates
     fmt
     tbb_static
     geogram
-    omp
     FastEnvelope
     IndirectPredicates
 )

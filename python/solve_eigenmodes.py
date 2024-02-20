@@ -1,62 +1,64 @@
 import sys
 import ngsolve
-from ngsolve import *
-from VibroAcoustic import *
-from elasticity.eigenfrequencies import *
-from acoustic.boundarysourcesolver import *
-import ngsolve.solvers as solvers
-from ngsolve.la import EigenValues_Preconditioner
+
+from numerics.preconditioning import fe_preconditioning
+from numerics.eigensystemsolver import solveEigensystem
+from elasticity.eigenfrequencies import build_elasticity_system_on_fes, steel
 
 
-#path = sys.argv[1] # '../data/tuningfork_.vol' #sys.argv[1] #"/home/kai/Development/github/NGSovleCoding/data/ridex-Body004.vol"
-path = '../build-C++-Imported_Kit-Debug/test.vol'
-#SetVisualization(clipping=True, clipnormal=tuple([0., 0., -1.]))
+path = "/home/kai/Deckel.vol"
+count = 30
 
 mesh = ngsolve.Mesh(path)
-
-solid_fes = VectorH1(mesh, order=2, complex=True)
+solid_fes = ngsolve.VectorH1(mesh, order=2, complex=True)
 a, b = build_elasticity_system_on_fes(steel, solid_fes, (0+0.0j))
+a, b = fe_preconditioning(a, b, 'h1amg')
+gfu = solveEigensystem(solid_fes, a, b)
 
-# bddc, h1amg, multigrid, local
-precond = 'h1amg'
-pre = Preconditioner(a, precond)
-#pre = IdentityMatrix(solid_fes.ndof, complex=True)
+ngsolve.Draw(gfu)
 
-a.Assemble()
-b.Assemble()
+vertices = []
+triangles = []
+tetraedras = []
+eigenmodes = []
 
-#jac = a.mat.CreateBlockSmoother(solid_fes.CreateSmoothingBlocks())
-#preJpoint = a.mat.CreateSmoother(solid_fes.FreeDofs())
-lams = ngsolve.krylovspace.EigenValues_Preconditioner(mat=a.mat, pre=pre)
-#kapa = max(lams)/min(lams)
-#print(kapa)
+for v in mesh.vertices:
+    p = [v.point[0], v.point[1], v.point[2]]
+    vertices.append(p)
 
-count = 15
-gfu = GridFunction(solid_fes, multidim=count)
+for e in mesh.Elements(ngsolve.BND):
+    v = e.vertices
+    tri = [v[0].nr, v[1].nr, v[2].nr]
+    triangles.append(tri)
 
-lams = ngsolve.ArnoldiSolver(a.mat, b.mat, solid_fes.FreeDofs(), list(gfu.vecs), 4000)
-#lams, evecs = ngsolve.solvers.PINVIT(a.mat, b.mat, pre, num=count, maxit=int(count/2), printrates=True, GramSchmidt=True)
-#for i in range(len(evecs)):
-#    gfu.vecs[i].data = evecs[i]
-#e, ev = solvers.LOBPCG(a.mat, b.mat, pre, num=count, maxit=300, printrates=True)
-#for i in range(count):
-#    gfu.vec.data[i] = ev[i][0]
+for k in range(count):
+    E = gfu.MDComponent(k)
+    eigenmode = []
+    for i, v in enumerate(vertices):
+        x = mesh(v[0], v[1], v[2])
+        e = E(x)
+        eigenmode.append(e)
+    eigenmodes.append(eigenmode)
 
-#print(gfu.vecs.data[0])
+print(len(vertices))
+print(len(triangles))
+print(len(eigenmodes))
 
-E = gfu.MDComponent(10)
+
+eigenmodes = []
+names = []
+for i in range(count):
+    E = gfu.MDComponent(i)
+    eigenmodes.append(E.real)
+    eigenmodes.append(E.imag)
+    names.append("mode-" + str(lams[i]) + "-real")
+    names.append("mode-" + str(lams[i]) + "-imag")
+
 # VTKOutput object
-vtk = VTKOutput(ma=mesh,
-                coefs=[E.real, E.imag],
-                names = ["eigenmode0", "eigenmode1"],
-                filename="mode0",
-                subdivision=1,
+vtk =  ngsolve.VTKOutput(ma=mesh,
+                coefs=eigenmodes,
+                names = names,
+                filename="mode02",
+                subdivision=0,
                 legacy=False)
 vtk.Do()
-
-Draw(gfu)
-
-ngmesh = mesh.ngmesh
-print(lams)
-
-

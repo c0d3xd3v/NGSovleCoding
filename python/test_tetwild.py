@@ -1,77 +1,40 @@
+import os
 import sys
+import igl
 import numpy as np
-import ngsolve
+
+import pytetwild
 import netgen.meshing as nm
 
-import wildmeshing as wm
-
 from meshing.tools import *
+from Visualization.vtkhelper import iglToVtkPolydata
 
-path = sys.argv[1] # "/home/kai/Development/github/NGSovleCoding/data/tuningfork.stl"
 
-tetra = wm.Tetrahedralizer(
-#    coarsen=False,
-#    stop_quality=10,
-#    max_its=20,
-#    stage=2,
-#    stop_p=-1,
-#    epsilon=0.0001,
-#    edge_length_r=1.0/20.0
-    )
+path = sys.argv[1]
 
-tetra.load_mesh(path)
-tetra.set_log_level(16)
-tetra.tetrahedralize()
+file_path, file = os.path.split(path)[0], os.path.split(path)[1]
+file_name, file_ext = os.path.splitext(file)[0], os.path.splitext(file)[1]
 
-tetmesh = tetra.get_tet_mesh()
-surface = tetra.get_tracked_surfaces()
+wrapper = pytetwild.FTetWildWrapper(stop_energy=10, ideal_edge_length_rel=0.025, eps_rel=0.001)
+sv, sf = igl.read_triangle_mesh(path)
+wrapper.loadMeshGeometry(sv, sf)
+wrapper.tetrahedralize()
+tris, tets, nods = wrapper.getSurfaceIndices()
 
-surf = tetra.get_surface_triangles()
-
-points = tetmesh[0]
-tets = tetmesh[1]
-tris = surface[1][0]
+wrapper.save(file_path+"/" + file_name)
+surface_mesh_path = file_path + "/" + file_name + "_surface.obj"
+igl.write_triangle_mesh(surface_mesh_path, nods, tris)
+vtkPolydata = iglToVtkPolydata(tris, nods)
 
 mesh = nm.Mesh()
-#mesh.SetMaterial(1, "default")
-fds = mesh.Add(FaceDescriptor(bc=0, domin=0, surfnr=0))
-#mesh = addSurfaceFromLists(fds, mesh, points, tris)
-#mesh = addVolumeFromLists(0, mesh, points, tets)
 
 pmap = {}
-for i, p in enumerate(points):
+for i, p in enumerate(nods):
     mp = MeshPoint(Point3d(p[0], p[1], p[2]))
     pmap[i] = mesh.Add(mp)
 
-for i, tri in enumerate(tris):
-    T = Element2D(fds, [pmap[v] for v in tri])
-    mesh.Add(T)
-
-points = tetmesh[0]
-index = 0
-for i, tet in enumerate(tets):
-    vindices = [pmap[v] for v in tet]
-    tmp = vindices[2]
-    vindices[2] = vindices[3]
-    vindices[3] = tmp
-    T = Element3D(index, vindices)
-    mesh.Add(T)
-
+fds = mesh.Add(FaceDescriptor(bc=1, domin=0, surfnr=0))
+mesh = addSurfaceFromLists(fds, mesh, pmap, tris)
+mesh = addVolumeFromLists(0, mesh, pmap, tets)
 mesh.Update()
-
-path, name = os.path.split(path)
-name = os.path.basename(name).split('.')[0]
-print(path + "/" + name + ".vol")
-mesh.Save(path + "/" + name + "_.vol")
-print(path + "/" + name + ".msh")
-tetra.save(path + "/" + name + ".msh",
-            floodfill=True,
-            manifold_surface=True,
-#            use_input_for_wn=True,
-            correct_surface_orientation=True,
-#            all_mesh=False
-)
-
-
-
-tris = tetra.get_surface_triangles()
+mesh.Save(file_path+"/" + file_name + ".vol")

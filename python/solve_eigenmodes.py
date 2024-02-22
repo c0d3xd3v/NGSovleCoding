@@ -11,11 +11,12 @@ count = 30
 
 mesh = ngsolve.Mesh(path)
 solid_fes = ngsolve.VectorH1(mesh, order=2, complex=True)
-a, b = build_elasticity_system_on_fes(steel, solid_fes, (0+0.0j))
-a, b = fe_preconditioning(a, b, 'h1amg')
-gfu = solveEigensystem(solid_fes, a, b)
+a, b = build_elasticity_system_on_fes(steel, solid_fes)
+a, b, pre, kapa = fe_preconditioning(a, b, 'h1amg')
+gfu, lams = solveEigensystem(solid_fes, a, b, count, "arnoldi", pre)
 
 ngsolve.Draw(gfu)
+print(lams)
 
 vertices = []
 triangles = []

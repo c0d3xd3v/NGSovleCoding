@@ -12,8 +12,8 @@ def solveHelmholtz(fes, gfu, roh=0.001):
     a += -roh**2 * u * v * dx
     a += -roh*1j * u * v * ds("outer")
 
-    # bddc, h1amg, multigrid, local
-    precond = 'h1amg'
+    # bddc, h1amg, multigrid, local, direct
+    precond = 'bddc'
     pre = ngsolve.Preconditioner(a, precond)
     a.Assemble()
 
@@ -29,6 +29,8 @@ def solveHelmholtz(fes, gfu, roh=0.001):
     res = f.vec.CreateVector()
     res.data = f.vec - a.mat * gfu.vec
 
-    #gfu.vec.data += ngsolve.solvers.GMRes(a.mat, res, freedofs=fes.FreeDofs(), tol=1e-6, maxsteps=3000, restart=100, printrates=True)
+    #gfu.vec.data += ngsolve.solvers.GMRes(a.mat, res, freedofs=fes.FreeDofs(), tol=1e-5, maxsteps=3000, restart=100, printrates=False)
+    #solver = ngsolve.CGSolver(mat=a.mat, pre=pre)
+    #gfu.vec.data = solver * res
     gfu.vec.data += a.mat.Inverse(fes.FreeDofs(), inverse="sparsecholesky") * res
     return gfu

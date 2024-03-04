@@ -28,8 +28,6 @@ class Material:
 # type=Material(type of model (e.g. "linear"), E (=young-module),nu (=poisson number), rho (=density))
 aluminium = Material("linear", 69 * (10 ** 6), 0.33, 2700 * (10 ** (-9)))
 steel = Material("linear", 220 * (10 ** 6), 0.28, 7700 * (10 ** (-9)))
-# ######################################################################################################################
-
 
 # ######################################################################################################################
 def build_elasticity_system_on_fes(_material, _fes):
@@ -44,28 +42,6 @@ def build_elasticity_system_on_fes(_material, _fes):
     _b += ngsolve.SymbolicBFI(_material.rho * _u * _v)
 
     return _a, _b
-
-# ######################################################################################################################
-def solveElasticityEigenmodes(fes, num, shift, material):
-    #num = 20
-    #shift = 10.0
-    a, b = build_elasticity_system_on_fes(material, fes, (0+0.0j))
-    # bddc, h1amg, multigrid, local
-    precond = 'h1amg'
-    pre = ngsolve.Preconditioner(a, precond)
-
-    a.Assemble()
-    b.Assemble()
-
-    lams = ngsolve.krylovspace.EigenValues_Preconditioner(mat=a.mat, pre=pre)
-
-    u = ngsolve.GridFunction(fes, name="eigenmodes", multidim=num)
-    lams = ngsolve.ArnoldiSolver(a.mat, b.mat, fes.FreeDofs(), list(u.vecs), 4000.0)
-    #lams, evecs = ngsolve.solvers.PINVIT(a.mat, b.mat, pre, printrates=True, GramSchmidt=True)
-    #for i in range(len(evecs)):
-    #    u.vecs[i].data = evecs[i]
-    return u, lams
-
 
 # ######################################################################################################################
 # argv: list[str] = sys.argv

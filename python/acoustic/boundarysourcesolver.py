@@ -10,7 +10,8 @@ def solveAcousticBoundaryValue(air_fes, n, g,roh, boundaries):
     gfu = solveHelmholtz(air_fes, gfu, roh)
     return gfu
 
-def rohForAir():
+def rohForAir(f):
+    print("s : ", 299792458./(10.*f))
     # The air is the acoustic medium at the room temperature with a 
     # density of 1.21 kgm−3 and sound speed of 340 ms−1 at a 
     # reference pressure of 20 μPa

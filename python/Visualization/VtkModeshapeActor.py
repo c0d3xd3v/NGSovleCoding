@@ -1,6 +1,8 @@
 import vtkmodules.all as vtk
 from Visualization.vtkhelper import *
-
+import numpy as np
+import math
+from vtkmodules.util.numpy_support import vtk_to_numpy, numpy_to_vtk
 
 class VtkModeShapeActor():
     def __init__(self):
@@ -13,6 +15,7 @@ class VtkModeShapeActor():
         self.colorTransferFunction.SetVectorModeToMagnitude()
         self.mapper = vtk.vtkOpenGLPolyDataMapper()
         self.actor = vtk.vtkActor()
+        self.function_name = "eigenmode8"
 
     def setDataset(self, dataset):
         self.dataset = dataset
@@ -24,8 +27,36 @@ class VtkModeShapeActor():
         self.clipper = self.setupClipping(dataset, self.center)
         self.gridToPolyData = self.toPolyData(self.clipper.GetOutput())
         self.normals = self.setupNormals(self.gridToPolyData.GetOutputPort())
+
+        self.prgfilter = vtk.vtkProgrammableFilter()
+        self.prgfilter.SetInputData(self.normals.GetOutput())
+        self.time = 0
+        def animateFilter():
+            input_data = self.prgfilter.GetInputDataObject(0, 0)
+            output_data = self.prgfilter.GetOutputDataObject(0)
+
+            points = vtk_to_numpy(input_data.GetPoints().GetData())
+            real = vtk_to_numpy(input_data.GetPointData().GetArray(self.function_name))
+            #imag = vtk_to_numpy(input_data.GetPointData().GetArray("eigenmode1"))
+
+            self.time = self.time + 1
+            t = self.time / 100.0
+            self.time = self.time % 100
+
+            amp = 0.5
+            result = points + (real*np.cos(t*2.0*math.pi))*amp;
+            #result = real*np.cos(t*2.0*math.pi) + imag*np.sin(t*2.0*math.pi)
+            result_array_vtk = numpy_to_vtk(result, deep=True)
+            output_data.GetPoints().SetData(result_array_vtk)
+
+        self.prgfilter.SetExecuteMethod(animateFilter)
+        self.prgfilter.Update()
+
+        #self.mapper = self.setupMapper(self.prgfilter.GetOutput())
         self.mapper = self.setupMapper(self.normals.GetOutput())
         self.actor = self.setupActor(self.mapper)
+
+        self.disableClipping()
 
     def enableClipping(self):
         self.gridToPolyData.SetInputData(self.clipper.GetOutput())
@@ -36,6 +67,12 @@ class VtkModeShapeActor():
         self.gridToPolyData.SetInputData(self.dataset)
         self.gridToPolyData.Update()
         self.normals.Update()
+
+    def enableEdges(self):
+        self.actor.GetProperty().EdgeVisibilityOn()
+
+    def disableEdges(self):
+        self.actor.GetProperty().EdgeVisibilityOff()
 
     def setupClipping(self, dataset, center):
         clipper = vtk.vtkClipDataSet()
@@ -60,24 +97,30 @@ class VtkModeShapeActor():
         normals.SetInputConnection(datasetport)
         normals.AutoOrientNormalsOn()
         normals.ConsistencyOn()
-        normals.ComputePointNormalsOn()
+        normals.ComputePointNormalsOff()
         normals.Update()
 
         return normals
 
+    def select_function(self, name):
+        self.function_name = name
+        self.mapper.SelectColorArray(self.function_name)
+        self.mapper.MapDataArrayToVertexAttribute("real", self.function_name, vtk.vtkDataObject.FIELD_ASSOCIATION_POINTS)
+        real = vtk_to_numpy(self.dataset.GetPointData().GetArray(self.function_name))
+        print(np.min(real), np.max(real))
+        self.mapper.SetScalarRange([0., np.max(real)])
+
     def setupMapper(self, dataset):
         mapper = vtk.vtkOpenGLPolyDataMapper()
         mapper.SetInputData(dataset)
-        mapper.ScalarVisibilityOn()
-        #mapper.SelectColorArray('eigenmode0')
-        #mapper.SetScalarModeToUsePointFieldData()
-        #mapper.SetColorModeToMapScalars()
-        #mapper.InterpolateScalarsBeforeMappingOn()
-        mapper.MapDataArrayToVertexAttribute("real", "eigenmode0", vtk.vtkDataObject.FIELD_ASSOCIATION_POINTS, 3)
-        mapper.MapDataArrayToVertexAttribute("imag", "eigenmode1", vtk.vtkDataObject.FIELD_ASSOCIATION_POINTS, 3)
-        #sr = 0.1
-        #mapper.SetScalarRange([0.0, sr])
-        #mapper.SetLookupTable(self.lut)
+        mapper.SelectColorArray(self.function_name)
+        mapper.MapDataArrayToVertexAttribute("real", self.function_name, vtk.vtkDataObject.FIELD_ASSOCIATION_POINTS)
+        #mapper.MapDataArrayToVertexAttribute("imag", "eigenmode1", vtk.vtkDataObject.FIELD_ASSOCIATION_POINTS)
+        #mapper.ScalarVisibilityOn()
+        mapper.SetScalarModeToUsePointFieldData()
+        mapper.InterpolateScalarsBeforeMappingOn()
+        mapper.SetScalarRange([0., 1.])
+        mapper.SetLookupTable(self.lut)
 
         return mapper
 
@@ -100,13 +143,15 @@ class VtkModeShapeActor():
             "//VTK::ValuePass::Impl",
             True, # before the standard replacements
             "//VTK::ValuePass::Impl\n" # we still want the default
-            "vec3 displacement = real*cos(6.28*time_value) + imag*sin(6.28*time_value);"
-            "vec3 r = vertexMC.xyz + displacement*3.;\n"
-            "vertexVCVSOutput = MCVCMatrix * vec4(r, 1.0);\n"
-            "gl_Position = MCDCMatrix * vec4(r, 1.0);\n",
+            "float pi = 3.14159;"
+            "float scale = 15.;"
+            "vec3 d = real*sin(2.*pi*time_value);"
+            "vec3 r = vertexMC.xyz;\n"
+            "vertexVCVSOutput = MCVCMatrix * vec4(r + 5.0*d, 1.0);"
+            "gl_Position = MCDCMatrix * vec4(r + 5.0*d, 1.0);\n",
             False # only do it once
         )
-        actor.GetProperty().EdgeVisibilityOff()
+        actor.GetProperty().EdgeVisibilityOn()
         actor.SetMapper(mapper)
         return actor
 
@@ -114,7 +159,9 @@ class VtkModeShapeActor():
         return self.center
 
     def setTimer(self, time):
-        sp = self.actor.GetShaderProperty()
-        uniforms = sp.GetVertexCustomUniforms()
-        uniforms.SetUniformf("time_value", time)
+        #sp = self.actor.GetShaderProperty()
+        #uniforms = sp.GetVertexCustomUniforms()
+        #uniforms.SetUniformf("time_value", 0.)
+        self.prgfilter.Modified()
+        self.prgfilter.Update()
 

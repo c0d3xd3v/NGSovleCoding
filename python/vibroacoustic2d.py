@@ -2,7 +2,7 @@ from ngsolve import *
 from netgen.occ import *
 from netgen.geom2d import SplineGeometry
 
-from helmholtz import *
+from pde.helmholtz import *
 
 geo = SplineGeometry()
 C = geo.AddCircle((0.0, 0.0), 2.8, 

@@ -16,15 +16,6 @@ from vtkmodules.vtkRenderingCore import (
 import vtk
 import xml.etree.ElementTree as ET
 
-# Erstellen ein VTK-Array aus Ihrem NumPy-Array
-# vtkDataArray = vtk.vtkFloatArray()
-# vtkDataArray.SetName("MyData")
-# vtkDataArray.SetNumberOfComponents(3)
-# for i in range(gridToPolyData.GetNumberOfPoints()):
-#     vtkDataArray.InsertNextTuple([1.0, 0.0,  0.0])
-# pd = gridToPolyData.GetPointData()
-# pd.AddArray(vtkDataArray)
-
 def make_axes_actor(scale, xyz_labels):
     """
     :param scale: Sets the scale and direction of the axes.
@@ -122,7 +113,7 @@ def create_color_transfer_function_from_xml(xml_filename):
         b = float(point.get("b"))
         colorTransferFunction.AddRGBPoint(x, r, g, b)
     
-    color_steps = 20
+    color_steps = 32
     # Erstellen einer VTK-Lookup-Tabelle (LookupTable) basierend auf der Farbtransferfunktion
     lut = vtk.vtkLookupTable()
     lut.SetNumberOfTableValues(color_steps)  # Anzahl der Werte in der LUT (z.B. 256 für 8-Bit Farbtiefe)
@@ -176,23 +167,32 @@ def addRandomCellData(triangle_polydata):
     return triangle_polydata
 
 
-def addScalarCellData(triangle_polydata, cell_data):
+def addScalarCellData(triangle_polydata, cell_data, components, name):
     tgroupping = vtk.vtkFloatArray()
-    tgroupping.SetNumberOfComponents(1)
-    tgroupping.SetName("group")
+    tgroupping.SetNumberOfComponents(components)
+    tgroupping.SetName(name)
 
-    scale = len(np.unique(cell_data))
     n = triangle_polydata.GetNumberOfPoints()
 
-    print("polys     : " + str(triangle_polydata.GetNumberOfPolys()))
-    print("points    : " + str(triangle_polydata.GetNumberOfPoints()))
-    print("cells     : " + str(triangle_polydata.GetNumberOfCells()))
-    print("verts     : " + str(triangle_polydata.GetNumberOfVerts()))
-    print("celldata  : " + str(len(cell_data)))
+    #print("polys     : " + str(triangle_polydata.GetNumberOfPolys()))
+    #print("points    : " + str(triangle_polydata.GetNumberOfPoints()))
+    #print("cells     : " + str(triangle_polydata.GetNumberOfCells()))
+    #print("verts     : " + str(triangle_polydata.GetNumberOfVerts()))
+    #print("celldata  : " + str(len(cell_data)))
 
     for i in range(n):
-        tgroupping.InsertNextTuple1(float(cell_data[i])/float(scale))
+        if components > 1:
+            if len(cell_data[i]) != components:
+                print("error")
+                break
+        if components == 1:
+            tgroupping.InsertNextTuple1(cell_data[i])
+        else:
+            tgroupping.InsertNextTuple3(cell_data[i][0], cell_data[i][1], cell_data[i][2])
     
-    triangle_polydata.GetPointData().SetScalars(tgroupping)
+    if components == 1:
+        triangle_polydata.GetPointData().AddArray(tgroupping)
+    else:
+        triangle_polydata.GetPointData().AddArray(tgroupping)
 
     return triangle_polydata

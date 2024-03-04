@@ -28,9 +28,9 @@ Draw(eigenmodes)
 
 air_fes = H1(ngsmesh, definedon="air", dirichlet=ngsmesh.Boundaries("solid|fixed"), order=2, complex=True)
 n = specialcf.normal(3)
-E = eigenmodes.MDComponent(5)
+E = eigenmodes.MDComponent(6)
 g = BoundaryFromVolumeCF(E)
-roh = rohForAir()
+roh = rohForAir(lams[6])
 gfu = solveAcousticBoundaryValue(air_fes, n, g, roh, ngsmesh.Boundaries("solid|fixed"))
 
 Draw(gfu)

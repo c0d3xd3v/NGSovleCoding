@@ -1,11 +1,11 @@
 {
     "files": [
-        "Visualization/VtkFEMMeshWidget.py",
         "Visualization/VtkModeshapeActor.py",
-        "Visualization/VtkModeshapeScene.py",
+        "Visualization/VtkNGSolve.py",
         "Visualization/VtkPressureFieldActor.py",
-        "Visualization/VtkQtRenderWindow.py",
-        "Visualization/VtkRenderWindow.py",
+        "Visualization/qt/main.qml",
+        "Visualization/qt/drawutils.py",
+        "Visualization/qt/VtkFEMMeshWidget.py",
         "Visualization/vtkhelper.py",
         "acoustic/boundarysourcesolver.py",
         "elasticity/eigenfrequencies.py",
@@ -18,7 +18,6 @@
         "numerics/preconditioning.py",
         "pde/helmholtz.py",
         "pde/poission.py",
-        "qt_vtk_modeshape_rendering.py",
         "solve_eigenmodes.py",
         "solve_vibro_acoustic_tf.py",
         "spectral_clustering_test.py",

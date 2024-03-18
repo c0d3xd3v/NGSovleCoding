@@ -3,7 +3,7 @@ import ngsolve
 from Visualization.vtkhelper import iglToVtkPolydata, addScalarCellData
 from Visualization.VtkModeshapeActor import VtkModeShapeActor
 
-def gfuActor(mesh, gfu, count):
+def gfuActor(mesh, gfu, count, dim=3):
     vertices = []
     triangles = []
     tetraedras = []
@@ -18,13 +18,21 @@ def gfuActor(mesh, gfu, count):
         tri = [v[0].nr, v[1].nr, v[2].nr]
         triangles.append(tri)
 
-    for k in range(count):
-        E = gfu.MDComponent(k)
+    if dim == 1:
+        E = gfu
         eigenmode = []
         for i, v in enumerate(vertices):
             x = mesh(v[0], v[1], v[2])
             eigenmode.append(E.real(x))
         eigenmodes.append(eigenmode)
+    else:
+        for k in range(count):
+            E = gfu.MDComponent(k)
+            eigenmode = []
+            for i, v in enumerate(vertices):
+                x = mesh(v[0], v[1], v[2])
+                eigenmode.append(E.real(x))
+            eigenmodes.append(eigenmode)
 
     polyData = iglToVtkPolydata(triangles, vertices)
     for mid in range(count):
@@ -33,7 +41,7 @@ def gfuActor(mesh, gfu, count):
         for k in range(len(eigenmodes[mid])):
             eigenmodes[mid][k] = eigenmodes[mid][k]/(emax - emin)
         name = "eigenmode" + str(mid)
-        polyData = addScalarCellData(polyData, eigenmodes[mid], 3, name)
+        polyData = addScalarCellData(polyData, eigenmodes[mid], dim, name)
 
     modeshapeActor = VtkModeShapeActor()
     modeshapeActor.setDataset(polyData)

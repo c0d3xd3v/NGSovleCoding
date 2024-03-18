@@ -75,7 +75,7 @@ netgen::Mesh *generateNGMesh(Eigen::MatrixXf &nodes, Eigen::MatrixXi &tris, Eige
     return mesh;
 }
 
-void loadMSH(string &path, Eigen::MatrixXf &nodes, Eigen::MatrixXi &tris, Eigen::MatrixXi &tets)
+void loadMSH(std::string  &path, Eigen::MatrixXf &nodes, Eigen::MatrixXi &tris, Eigen::MatrixXi &tets)
 {
     PyMesh::MshLoader mshLoader(path);
     nodes = Eigen::MatrixXf(mshLoader.get_nodes().cast<float>());

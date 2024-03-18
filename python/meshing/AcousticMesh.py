@@ -42,5 +42,9 @@ if __name__ == "__main__":
     path = sys.argv[1]
     solidMesh = ngsolve.Mesh(path).ngmesh
     solidMesh.SetMaterial(1, "solid")
-    mesh = generateVibroAcousticDomain(solidMesh, maxh=30.0)
+    c = 343. #m/s
+    f = 10560. # Hz = 1/s
+    s = c /(10.*f)
+    print("s : ", s)
+    mesh = generateVibroAcousticDomain(solidMesh, maxh=20.0)
     mesh.Save("mesh-test.vol")

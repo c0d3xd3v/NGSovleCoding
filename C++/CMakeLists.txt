@@ -41,7 +41,7 @@ find_package(VTK REQUIRED COMPONENTS
 #include_directories(/home/kai/Development/github/FloatTetwild/3rdparty/libigl/external/eigen)
 #find_package(Eigen3)
 #find_package(libigl)
-
+find_package(MPI REQUIRED)
 
 set(TETWILD_ROOT $ENV{TETWILD_DIR})
 set(TETWILD_INCLUDE_DIR ${TETWILD_ROOT}/include/)
@@ -49,6 +49,7 @@ set(TETWILD_LIB_DIR ${TETWILD_ROOT}/lib/)
 
 include_directories(${TETWILD_ROOT}/../3rdparty/include)
 include_directories($ENV{IGL_INCLUDE_DIR})
+include_directories(/home/kai/Development/libs/ngsolve-install/include/)
 
 include_directories(src)
 include_directories(${EIGEN_INCLUDE_DIR})
@@ -61,33 +62,57 @@ add_definitions(-DEIGEN_DONT_VECTORIZE)
 
 message("vtk libs : ${VTK_LIBRARIES}")
 
+link_directories(${MPI_C_LINK_FLAGS})
+set(CMAKE_COMPILE_FLAGS ${CMAKE_COMPILE_FLAGS} ${MPI_C_COMPILE_FLAGS})
+
 set(SRC_PDE
    src/pde/material.cpp
    src/pde/elasticitysystem.cpp
    src/pde/eigensystemsolver.cpp
    src/pde/solutionmapper.cpp)
 
-# add_executable(Elasticity-Eigenproblem
-#    src/Elasticity-Eigenproblem.cpp
-#    ${SRC_PDE}
-#    src/Meshing/IOUtils.cpp
-#    src/Meshing/IOUtils.h
-#    src/Meshing/MshLoader.cpp
-#    src/Meshing/MshLoader.h
-#    src/Meshing/MshSaver.cpp
-#    src/Meshing/MshSaver.h
-#    src/pde/modemeanmaxvariation.h
-#    src/pde/modemeanmaxvariation.cpp
-# )
+add_executable(Elasticity-Eigenproblem
+    src/Elasticity-Eigenproblem.cpp
+    ${SRC_PDE}
+    src/Meshing/IOUtils.cpp
+    src/Meshing/IOUtils.h
+    src/Meshing/MshLoader.cpp
+    src/Meshing/MshLoader.h
+    src/Meshing/MshSaver.cpp
+    src/Meshing/MshSaver.h
+    src/pde/modemeanmaxvariation.h
+    src/pde/modemeanmaxvariation.cpp
+)
+#target_link_libraries(core.x ${MPI_C_LIBRARIES})
+message(STATUS "mpi lib : ${MPI_LIBRARY}")
+target_link_libraries(Elasticity-Eigenproblem
+    /usr/lib/libmpi.so
+    ngcomp
+    ngbla
+    ngfem
+    ngstd
+    nglib
+    ngsolve
+    Qt::Quick
+    ${VTK_LIBRARIES}
+#    Eigen3::Eigen
+)
 
-# target_link_libraries(Elasticity-Eigenproblem
-#    ngcomp
-#    Qt5::Gui
-#    Qt5::Quick
-#    Qt5::Widgets
-#    ${VTK_LIBRARIES}
-#    Eigen3::Eigen)
-
+add_executable(ngs_arnoldi
+    src/ngs_arnoldi.cpp
+)
+#target_link_libraries(core.x ${MPI_C_LIBRARIES})
+message(STATUS "mpi lib : ${MPI_LIBRARY}")
+target_link_libraries(ngs_arnoldi
+    ngcore
+    ngcomp
+    ngbla
+    ngla
+    ngfem
+    ngstd
+    nglib
+    ngsolve
+)
 
 add_executable(meshing
    src/meshing.cpp

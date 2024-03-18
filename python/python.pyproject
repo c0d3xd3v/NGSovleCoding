@@ -20,9 +20,14 @@
         "pde/poission.py",
         "solve_eigenmodes.py",
         "solve_vibro_acoustic_tf.py",
-        "spectral_clustering_test.py",
-        "test_partitioning.py",
+        "inprogress/spectral_clustering_test.py",
+        "inprogress/test_partitioning.py",
         "test_tetwild.py",
-        "vibroacoustic2d.py"
+        "inprogress/vibroacoustic2d.py",
+        "Visualization/qt/ControlWidget.ui",
+        "petsc/petsc_ngs_example.py",
+        "petsc/ngspetsc_eigensolver.py",
+        "petsc/ngs_slepc_example.py",
+        "inprogress/ipy_mpi.py"
     ]
 }

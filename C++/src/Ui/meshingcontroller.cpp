@@ -18,7 +18,7 @@ void MeshingController::domeshing(double stop_energy, double rel_edge_length, do
     FTetWildWrapper* ftetwildWrapper = new FTetWildWrapper(stop_energy, rel_edge_length, rel_eps);
     ftetwildWrapper->loadMeshGeometry(nodes, tris);
     ftetwildWrapper->tetrahedralize();
-    ftetwildWrapper->save();
+    //ftetwildWrapper->save();
     Eigen::MatrixXi tris_;
     Eigen::MatrixXi tets_;
     Eigen::MatrixXf nodes_;

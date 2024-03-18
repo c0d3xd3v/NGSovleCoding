@@ -6,17 +6,38 @@
 
 #include <vtk/QQuickVTKRenderItem.h>
 
+#include <ngstd.hpp>
+#include <nginterface_v2.hpp>
+#include <meshaccess.hpp>
+
+#include <mpi.h>
+
 int main(int argc, char** argv)
 {
-    Material &material = steel;
-    const double precision = 1.0e-10;
-    Array<double> dirbnd;
-    std::shared_ptr<MeshAccess> ma = make_shared<MeshAccess>("test.vol");
+    std::cout << argv[1] << ", " << steel.lam << ", " << steel.mu << ", " << steel.rho << std::endl;
+
+    MPI_Init(&argc, &argv);
+
+    netgen::NgMPI_Comm comm(MPI_COMM_WORLD);
+
+    netgen::Ngx_Mesh mesh(argv[1], comm);
+    std::cout << mesh.GetCommunicator().Size() << std::endl;
+    std::shared_ptr<MeshAccess> ma = make_shared<MeshAccess>(mesh.GetMesh());
+    shared_ptr<netgen::Mesh> ngmesh = ma->GetNetgenMesh();
+
+    netgen::Mesh *_m = ngmesh.get();
+    //_m->Distribute();
+    //_m->ReceiveParallelMesh();
+
 /*
     Flags surf_flags;
     std::shared_ptr<HDivHighOrderSurfaceFESpace> surf_fes =
             std::make_shared<HDivHighOrderSurfaceFESpace>(ma, surf_flags);
 */
+
+    Material &material = steel;
+    const double precision = 1.0e-10;
+    Array<double> dirbnd;
     ElasticityFESetup elasticityFes(ma, material, dirbnd);
 
     EigenSystemSolver ess(precision,
@@ -24,7 +45,8 @@ int main(int argc, char** argv)
                           elasticityFes.getBfmMatrix(),
                           elasticityFes.getFes(), 4000);
 
-    Array<shared_ptr<BaseVector>> &evecs = ess.getEvecs();
+
+    //Array<shared_ptr<BaseVector>> &evecs = ess.getEvecs();
 
     /*
     std::cout << std::endl << "evecs.Size : " << evecs.Size() << std::endl;
@@ -35,8 +57,8 @@ int main(int argc, char** argv)
     }
     */
 
-    SolutionMapper sm(ma);
-    sm.saveVTK(elasticityFes.getFes(), ess.getEvecs(), ess.getLams());
-
+    //SolutionMapper sm(ma);
+    //sm.saveVTK(elasticityFes.getFes(), ess.getEvecs(), ess.getLams());
+    //MPI_Finalize();
     return 0;
 }

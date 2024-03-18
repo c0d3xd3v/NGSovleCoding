@@ -107,7 +107,7 @@ class VtkModeShapeActor():
         self.mapper.SelectColorArray(self.function_name)
         self.mapper.MapDataArrayToVertexAttribute("real", self.function_name, vtk.vtkDataObject.FIELD_ASSOCIATION_POINTS)
         real = vtk_to_numpy(self.dataset.GetPointData().GetArray(self.function_name))
-        print(np.min(real), np.max(real))
+        #print(np.min(real), np.max(real))
         self.mapper.SetScalarRange([0., np.max(real)])
 
     def setupMapper(self, dataset):
@@ -151,7 +151,7 @@ class VtkModeShapeActor():
             "gl_Position = MCDCMatrix * vec4(r + 5.0*d, 1.0);\n",
             False # only do it once
         )
-        actor.GetProperty().EdgeVisibilityOn()
+        #actor.GetProperty().EdgeVisibilityOn()
         actor.SetMapper(mapper)
         return actor
 

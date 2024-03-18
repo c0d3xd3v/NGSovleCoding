@@ -11,7 +11,7 @@ def solveAcousticBoundaryValue(air_fes, n, g,roh, boundaries):
     return gfu
 
 def rohForAir(f):
-    print("s : ", 299792458./(10.*f))
+    #print("s : ", 299792458./(10.*f))
     # The air is the acoustic medium at the room temperature with a 
     # density of 1.21 kgm−3 and sound speed of 340 ms−1 at a 
     # reference pressure of 20 μPa
@@ -20,5 +20,5 @@ def rohForAir(f):
     compressibility_air = 101.0 # bar
     f = 540.0
     roh = 2.0 * math.pi * f * sqrt(compressibility_air * density_air)
-    roh = roh*0.0000001
+    roh = roh*0.0000005
     return roh

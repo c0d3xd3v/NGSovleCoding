@@ -16,8 +16,8 @@ EigenSystemSolver::EigenSystemSolver(
 
     //GetPreconditionerClasses().Print(std::cout);
     // multigrid, direct, local, bddc, bddcc, bddcrc, h1amg
-    auto creator = GetPreconditionerClasses().GetPreconditioner("h1amg");
-    shared_ptr<Preconditioner> pre = creator->creatorbf(a, flags, "h1amg");
+    auto creator = GetPreconditionerClasses().GetPreconditioner("local");
+    shared_ptr<Preconditioner> pre = creator->creatorbf(a, flags, "local");
 
     a->Assemble(lh);
     m->Assemble(lh);
@@ -33,7 +33,8 @@ EigenSystemSolver::EigenSystemSolver(
     evecs = Array<shared_ptr<BaseVector>>(num);
     Arnoldi<Complex> arnoldi(a->GetMatrixPtr(), m->GetMatrixPtr(), fes->GetFreeDofs());
     arnoldi.SetShift(shift);
-    arnoldi.Calc(3*num+1, lam, num, evecs);
+    arnoldi.SetInverseType("mumps");
+    arnoldi.Calc(2*num+1, lam, num, evecs);
     for(int i = 0; i < num; i++)
     {
         std::cout << lam[i] << std::endl;

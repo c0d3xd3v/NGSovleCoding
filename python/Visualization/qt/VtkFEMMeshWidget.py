@@ -80,6 +80,18 @@ class VtkFEMMeshWidget(QVTKRenderWindowInteractor):
         self.renderWindowInteractor.Render()
         self.renderer.ResetCamera()
 
+def showTest():
+    app = QtWidgets.QApplication(sys.argv)
+
+    frame = QtWidgets.QFrame()
+
+    vl = QtWidgets.QVBoxLayout()
+    vtkWidget = VtkFEMMeshWidget()
+    vl.addWidget(vtkWidget)
+    frame.setLayout(vl)
+    frame.show()
+
+    app.exec()
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)

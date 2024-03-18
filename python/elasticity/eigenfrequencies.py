@@ -33,12 +33,12 @@ steel = Material("linear", 220 * (10 ** 6), 0.28, 7700 * (10 ** (-9)))
 def build_elasticity_system_on_fes(_material, _fes):
     #_fes: VectorH1 = VectorH1(_mesh, order=2, dirichlet=_dirichlet, complex=True)
     _u, _v = _fes.TrialFunction(), _fes.TestFunction()
-    _a = ngsolve.BilinearForm(_fes)
+    _a = ngsolve.BilinearForm(_fes, symmetric=True, eliminate_internal=True)
     _a += ngsolve.SymbolicBFI(2 * _material.mu
                               * ngsolve.InnerProduct(1.0 / 2.0 * (ngsolve.grad(_u) + ngsolve.grad(_u).trans),
                                                      1.0 / 2.0 * (ngsolve.grad(_v) + ngsolve.grad(_v).trans))
                               + _material.lam * ngsolve.div(_u) * ngsolve.div(_v))
-    _b = ngsolve.BilinearForm(_fes)
+    _b = ngsolve.BilinearForm(_fes, symmetric=True, eliminate_internal=True)
     _b += ngsolve.SymbolicBFI(_material.rho * _u * _v)
 
     return _a, _b

@@ -18,11 +18,20 @@ class FbItemRenderer(QQuickFramebufferObject.Renderer):
             self._fbo = None
             self.rw = vtk.vtkGenericOpenGLRenderWindow()
             self.rwi = QVTKRenderWindowInteractor()
+            self.style = None
+            self.style = vtk.vtkInteractorStyleTrackballCamera()
+            #self.style.SetMotionFactor(25.0)
+            self.rwi.SetInteractorStyle(self.style)
+            self.rwi.setMouseTracking(True)
+
+            self.mouseIn = False
+            self.vtkitem = None
 
             self.rwi.SetRenderWindow(self.rw)
             self.renderer = vtk.vtkRenderer()
             self.rw.AddRenderer(self.renderer)
             self.window = None
+
 
 
     def createFramebufferObject(self, size):
@@ -36,6 +45,9 @@ class FbItemRenderer(QQuickFramebufferObject.Renderer):
     def synchronize(self, item: QQuickFramebufferObject):
         size = item.size()
         self.rw.SetSize(int(size.width()), int(size.height()))
+        self.rwi.SetSize(int(size.width()), int(size.height()))
+        self.mouseIn = item.mouseIn
+        self.vtkitem = item
 
     def render(self):
         # Called with the FBO bound and the viewport set.
@@ -50,10 +62,26 @@ class FbItemRenderer(QQuickFramebufferObject.Renderer):
             self.rwi.Start()
             self.isinit = True
 
+        size = self.vtkitem.size()
+        #self.rw.SetSize(int(size.width()), int(size.height()))
+        #self.rwi.SetSize(int(1.0*20), int(size.height()/size.width()*20))
+
         self.rw.SetIsCurrent(True)
         self.rw.SetReadyForRendering(True)
+        self.style.SetMotionFactor(int(size.width()/size.height()*20))
+        if self.mouseIn:
+            if self.vtkitem.mouseMove:
+                self.rwi.MouseMoveEvent()
+                self.vtkitem.mouseMove = False
+            if self.vtkitem.mouseLeftPress:
+                self.rwi.LeftButtonPressEvent()
+                self.vtkitem.mouseLeftPress = False
+            if self.vtkitem.zoomIn:
+                self.rwi.MouseWheelForwardEvent()
+                self.vtkitem.zoomIn = False
+            elif self.vtkitem.zoomOut:
+                self.rwi.MouseWheelBackwardEvent()
+                self.vtkitem.zoomOut = False
 
-        self.rwi.MouseMoveEvent()
-        self.rwi.LeftButtonPressEvent()
         self.rw.Render()
         self.rwi.Render()

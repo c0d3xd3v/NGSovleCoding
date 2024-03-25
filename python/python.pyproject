@@ -28,6 +28,8 @@
         "petsc/petsc_ngs_example.py",
         "petsc/ngspetsc_eigensolver.py",
         "petsc/ngs_slepc_example.py",
-        "inprogress/ipy_mpi.py"
+        "inprogress/ipy_mpi.py",
+        "Visualization/qt/VTKItem.py",
+        "Visualization/qt/VTKItemFramebufferRenderer.py"
     ]
 }

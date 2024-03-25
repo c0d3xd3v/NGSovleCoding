@@ -45,4 +45,4 @@ def gfuActor(mesh, gfu, count, dim=3):
 
     modeshapeActor = VtkModeShapeActor()
     modeshapeActor.setDataset(polyData)
-    return modeshapeActor
+    return modeshapeActor, polyData

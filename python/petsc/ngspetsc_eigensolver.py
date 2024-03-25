@@ -27,7 +27,7 @@ a.Assemble()
 b.Assemble()
 
 solverParameters={"eps_type":"krylovschur", "pc_type":"bddc", "st_type":"sinvert"}
-solver = EigenSolver((b, a), fes, 20)
+solver = EigenSolver((a, b), fes, 20)
 solver.solve()
 
 for i in range(20):

@@ -41,7 +41,7 @@ def Draw2(femActor, periodic_timer=False):
     toplevel = engine.rootObjects()
     win = toplevel[0]
     win.show()
-    item = win.findChild(QQuickVTKRenderItem, "ConeView")
+    item = win.findChild(QQuickItem, "ConeView")
     print(item)
-    it : QVTKRenderWindowInteractor = cast(QVTKRenderWindowInteractor, item)
+    it : QVTKRenderWindowInteractor = cast(QVTKRWIBase, item)
     app.exec()

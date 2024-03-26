@@ -27,6 +27,26 @@ def cloneMouseEvent(event: QMouseEvent):
         event.source(),
     )
 
+def create_mouse_event_from_hover_event(hover_event: QHoverEvent) -> QMouseEvent:
+    # Extract relevant information from the hover event
+    pos = hover_event.pos()
+    global_pos = hover_event.scenePosition()  # Global position
+    button_state = Qt.NoButton  # Since it's a hover event, no button is pressed
+    modifiers = hover_event.modifiers()
+    buttons = Qt.MouseButton()
+
+    # Create a QMouseEvent with the extracted information
+    mouse_event = QMouseEvent(
+        QEvent.MouseMove,
+        pos,
+        global_pos,
+        button_state,
+        buttons,
+        modifiers
+    )
+
+    return mouse_event
+
 def cloneWheelEvent(event: QWheelEvent):
     return QWheelEvent(
         event.position(),
@@ -70,13 +90,12 @@ class VTKItem(QQuickFramebufferObject):
         self.mouseLeftPress = False
         self.mouseLeftRelease = False
 
-        QTimer.singleShot(1, lambda : self.object_created())
+        QTimer.singleShot(10, lambda : self.object_created())
 
     def object_created(self):
         if self.renderer != None:
             renderer = self.renderer.renderer
             self.interactor = self.renderer.rwi
-            #self.interactor.GetInteractorStyle().SetCurrentStyleToTrackballCamera()
 
             vtksnowwhite = [0.0, 0.0, 0.0]  # black
             vtk.vtkNamedColors().GetColorRGB("snow", vtksnowwhite)
@@ -96,73 +115,31 @@ class VTKItem(QQuickFramebufferObject):
             self.update()
             self.rendererInitialized.emit()
         else:
-            QTimer.singleShot(5, lambda : self.object_created())
+            QTimer.singleShot(15, lambda : self.object_created())
 
-    def mousePressEvent(self, event):
+    def mousePressEvent(self, event: QMouseEvent):
+        self.__processMouseButtonEvent(event)
+
+    def mouseReleaseEvent(self, event: QMouseEvent):
+        self.__processMouseButtonEvent(event)
+
+    def __processMouseButtonEvent(self, event: QMouseEvent):
+        self.lastMouseButtonEvent = cloneMouseEvent(event)
+        self.lastMouseButtonEvent.ignore()
         event.accept()
-        if self.mouseIn:
-            self.mouseLeftPress = True
-            #self.interactor.mousePressEvent(event)
-            #self.interactor.Modified()
         self.update()
-        #print(event)
-
-    def mouseReleaseEvent(self, event):
-        event.ignore()
-        self.mouseLeftRelease = True
-        #self.interactor.mousePressEvent(event)
-        self.interactor.Modified()
-        self.update()
-        #print(event)
 
     def mouseMoveEvent(self, event):
-        event.ignore()
-        if self.mouseIn:
-            self.mouseMove = True
-            self.interactor.mousePressEvent(event)
-            #self.interactor.Modified()
-        self.update()
-        #print(event)
-
-    def hoverLeaveEvent(self, event: QHoverEvent):
+        self.lastMouseMoveEvent = cloneMouseEvent(event)
+        self.lastMouseMoveEvent.ignore()
         event.accept()
-        self.mouseIn = False
-        #self.interactor.Render()
-        self.interactor.mousePressEvent(event)
         self.update()
-        #print(event)
-
-    def hoverEnterEvent(self, event: QHoverEvent):
-        event.accept()
-        self.mouseIn = True
-        self.interactor.mousePressEvent(event)
-        self.update()
-        #print(event)
-
-    def hoverMoveEvent(self, event: QHoverEvent):
-        event.accept()
-        if self.mouseIn:
-            self.mouseMove = True
-            pos = event.position()
-            self.interactor.mousePressEvent(event)
-            #self.interactor.Modified()
-        #print(event)
 
     def wheelEvent(self, event: QWheelEvent):
+        self.lastWheelEvent = cloneWheelEvent(event)
+        self.lastWheelEvent.ignore()
         event.accept()
-        #if self.mouseIn:
-        #    self.interactor.wheelEvent(event)
-        #    self.interactor.Modified()
-        delta = event.angleDelta().y()
-
-        if delta > 0:
-            self.zoomIn = True
-            self.zoomOut = False
-        elif delta < 0:
-            self.zoomIn = False
-            self.zoomOut = True
         self.update()
-        #print(event)
 
     def clearAllActors(self):
         actors = self.renderer.renderer.GetActors()
@@ -175,10 +152,8 @@ class VTKItem(QQuickFramebufferObject):
     def updatePaintNode(self, node, inOutData):
         width = self.width()
         height = self.height()
-        #print(width, height)
         if width != 0. and height != 0.:
             self.om.SetViewport(0, 0, 100./width, 100./height)
-
         return QQuickFramebufferObject.updatePaintNode(self, node, inOutData)
 
     def createRenderer(self):
@@ -198,7 +173,7 @@ if __name__ == "__main__":
     qmlRegisterType(VTKItem, "QmlVtk", 1, 0, "VTKItem")
     QCoreApplication.setAttribute(Qt.AA_ShareOpenGLContexts)
     QApplication.setAttribute(Qt.AA_ShareOpenGLContexts)
-    QQuickStyle.setStyle("Imagine");
+    QQuickStyle.setStyle("Material");
     #sys_argv = sys.argv
     #sys_argv += ["-style", "Windows"]
     app = QApplication()
@@ -220,7 +195,7 @@ if __name__ == "__main__":
 
         renderer.ResetCamera()
         item.update()
-    QTimer.singleShot(100, lambda : object_created())
+    QTimer.singleShot(10, lambda : object_created())
 
     class MainCtrl(QObject):
         def __init__(self, engine: QQmlApplicationEngine, item : VTKItem):
@@ -236,8 +211,6 @@ if __name__ == "__main__":
         @Slot(str)
         def loadSurfaceMesh(self, path):
             url = QUrl(path).toLocalFile()
-            print(url)
-            print(self.__vtkitem)
 
             # Save the current locale
             old_locale = locale.getlocale(locale.LC_NUMERIC)
@@ -245,7 +218,7 @@ if __name__ == "__main__":
             # Set the LC_NUMERIC category to "C"
             locale.setlocale(locale.LC_NUMERIC, "C")
             sv, sf = igl.read_triangle_mesh(url)
-            print(len(sv), len(sf))
+            print("sv, sf : ", len(sv), len(sf))
             # Restore the old locale
             locale.setlocale(locale.LC_NUMERIC, old_locale)
 

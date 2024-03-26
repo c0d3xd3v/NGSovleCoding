@@ -8,14 +8,15 @@ Item {
     width: 240
     height: 400
 
+
     FileDialog {
-           id: fileDialog
-           title: "Please choose a file"
-   //        currentFolder: shortcuts.home
-           nameFilters: ["surface mesh files (*.stl *.obj)"]
-           onAccepted: function() {
-               MainCtrl.loadSurfaceMesh(currentFile)
-           }
+        id: fileDialog
+        title: "Please choose a file"
+        //        currentFolder: shortcuts.home
+        nameFilters: ["surface mesh files (*.stl *.obj)"]
+        onAccepted: function() {
+            MainCtrl.loadSurfaceMesh(currentFile)
+        }
     }
 
     ToolBar {
@@ -51,6 +52,7 @@ Item {
         }
     }
 
+
     ScrollView {
         id: mainPageScrollView
         anchors.left: parent.left
@@ -69,24 +71,28 @@ Item {
             x: 0
             y: 0
             width: mainPageScrollView.width
-            height: 388
+            height: 290
             spacing: 6
 
-            RowLayout {
+            ColumnLayout {
                 id: rowLayout1
-                height: 100
+                Layout.fillHeight: false
                 Layout.fillWidth: true
-                spacing: 5
+                spacing: 0
 
                 Label {
                     id: label
                     text: qsTr("Label")
+                    Layout.margins: 5
                 }
 
                 TextField {
                     id: textField
+                    Layout.bottomMargin: 0
+                    leftPadding: 8
+                    padding: 8
                     Layout.margins: 5
-                    Layout.topMargin: 15
+                    Layout.topMargin: 0
                     Layout.fillWidth: true
                     placeholderText: qsTr("Text Field")
                 }
@@ -95,18 +101,21 @@ Item {
 
 
 
-            RowLayout {
+            ColumnLayout {
                 id: rowLayout2
-                height: 100
                 Layout.fillWidth: true
 
                 Label {
                     id: label1
                     text: qsTr("Label")
+                    Layout.bottomMargin: 0
+                    Layout.margins: 5
                 }
 
                 TextField {
                     id: textField1
+                    Layout.bottomMargin: 0
+                    Layout.topMargin: 0
                     Layout.margins: 5
                     Layout.fillWidth: true
                     placeholderText: qsTr("Text Field")
@@ -115,19 +124,21 @@ Item {
             }
 
 
-            RowLayout {
+            ColumnLayout {
                 id: rowLayout3
-                width: 100
-                height: 100
                 Layout.fillWidth: true
+                spacing: 5
 
                 Label {
                     id: label2
                     text: qsTr("Label")
+                    Layout.bottomMargin: 0
+                    Layout.margins: 5
                 }
 
                 TextField {
                     id: textField2
+                    Layout.topMargin: 0
                     Layout.margins: 5
                     Layout.fillWidth: true
                     placeholderText: qsTr("Text Field")
@@ -151,8 +162,6 @@ Item {
 
             Item {
                 id: item3
-                width: 200
-                height: 200
                 Layout.fillHeight: true
                 Layout.fillWidth: true
             }

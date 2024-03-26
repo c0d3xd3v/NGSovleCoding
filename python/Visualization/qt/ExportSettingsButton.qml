@@ -6,7 +6,6 @@ ToolButton {
     text: qsTr("Tool Button")
     display: AbstractButton.TextBesideIcon
     onClicked: function() {
-        console.log(swipeView.currentIndex)
         loader.source = "ExportSettings.qml"
         swipeView.currentIndex = 1
     }

@@ -15,7 +15,7 @@ class VtkModeShapeActor():
         self.colorTransferFunction.SetVectorModeToMagnitude()
         self.mapper = vtk.vtkOpenGLPolyDataMapper()
         self.actor = vtk.vtkActor()
-        self.function_name = "eigenmode8"
+        self.function_name = "eigenmode0"
 
     def setDataset(self, dataset):
         self.dataset = dataset
@@ -69,7 +69,17 @@ class VtkModeShapeActor():
         self.normals.Update()
 
     def enableEdges(self):
-        self.actor.GetProperty().EdgeVisibilityOn()
+        p = self.actor.GetProperty() # vtk.vtkProperty()
+
+        colors = vtk.vtkNamedColors()
+        edgeColor = colors.GetColor3d("Black")
+        p.SetEdgeColor(edgeColor)
+        #self.mapper.SetResolveCoincidentTopologyToPolygonOffset()
+        self.mapper.SetResolveCoincidentTopologyToPolygonOffset()
+        self.mapper.SetResolveCoincidentTopologyLineOffsetParameters(100.0, 10.0)
+        p.EdgeVisibilityOn()
+        #p.SetEdgeOpacity(1.0)
+        #self.mapper.SetColorModeToDefault()
 
     def disableEdges(self):
         self.actor.GetProperty().EdgeVisibilityOff()
@@ -105,17 +115,14 @@ class VtkModeShapeActor():
     def select_function(self, name):
         self.function_name = name
         self.mapper.SelectColorArray(self.function_name)
-        self.mapper.MapDataArrayToVertexAttribute("real", self.function_name, vtk.vtkDataObject.FIELD_ASSOCIATION_POINTS)
         real = vtk_to_numpy(self.dataset.GetPointData().GetArray(self.function_name))
-        #print(np.min(real), np.max(real))
+        print("range : ", np.min(real), np.max(real))
         self.mapper.SetScalarRange([0., np.max(real)])
 
     def setupMapper(self, dataset):
         mapper = vtk.vtkOpenGLPolyDataMapper()
         mapper.SetInputData(dataset)
         mapper.SelectColorArray(self.function_name)
-        mapper.MapDataArrayToVertexAttribute("real", self.function_name, vtk.vtkDataObject.FIELD_ASSOCIATION_POINTS)
-        #mapper.MapDataArrayToVertexAttribute("imag", "eigenmode1", vtk.vtkDataObject.FIELD_ASSOCIATION_POINTS)
         #mapper.ScalarVisibilityOn()
         mapper.SetScalarModeToUsePointFieldData()
         mapper.InterpolateScalarsBeforeMappingOn()
@@ -126,31 +133,6 @@ class VtkModeShapeActor():
 
     def setupActor(self, mapper):
         actor = vtk.vtkActor()
-        sp = actor.GetShaderProperty()
-        uniforms = sp.GetVertexCustomUniforms()
-        uniforms.SetUniformf("time_value", 0.0)
-
-        actor.GetShaderProperty().AddVertexShaderReplacement(
-            "//VTK::System::Dec\n",
-            True,
-            "//VTK::System::Dec\n"
-            "in vec3 real;\n"
-            "in vec3 imag;\n",
-            False
-        )
-
-        actor.GetShaderProperty().AddVertexShaderReplacement(
-            "//VTK::ValuePass::Impl",
-            True, # before the standard replacements
-            "//VTK::ValuePass::Impl\n" # we still want the default
-            "float pi = 3.14159;"
-            "float scale = 15.;"
-            "vec3 d = real*sin(2.*pi*time_value);"
-            "vec3 r = vertexMC.xyz;\n"
-            "vertexVCVSOutput = MCVCMatrix * vec4(r + 5.0*d, 1.0);"
-            "gl_Position = MCDCMatrix * vec4(r + 5.0*d, 1.0);\n",
-            False # only do it once
-        )
         #actor.GetProperty().EdgeVisibilityOn()
         actor.SetMapper(mapper)
         return actor

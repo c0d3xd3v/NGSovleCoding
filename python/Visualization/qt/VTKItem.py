@@ -2,25 +2,29 @@ import sys
 
 import vtk
 import igl
+import numpy as np
 
-from PySide6.QtCore import Qt, Signal, QTimer, QEvent, QPointF, QObject, Slot, QUrl
-from PySide6.QtGui import QMatrix4x4, QCursor, QMouseEvent, QWheelEvent, QHoverEvent, QGuiApplication
+from PySide6.QtWidgets import QApplication
+from PySide6.QtCore import Qt, Property, Signal, QTimer, QEvent, QPointF, QObject, Slot, QUrl, QPoint, QCoreApplication, QStringListModel
+from PySide6.QtGui import QMatrix4x4, QCursor, QMouseEvent, QWheelEvent, QHoverEvent, QGuiApplication, QSurfaceFormat
 from PySide6.QtQuick import QQuickFramebufferObject, QSGSimpleRectNode, QQuickItem
 from PySide6.QtOpenGL import QOpenGLFramebufferObject, QOpenGLFramebufferObjectFormat
+from PySide6.QtQml import qmlRegisterType, QQmlApplicationEngine
 
 from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
+from vtkmodules.util.numpy_support import vtk_to_numpy, numpy_to_vtk
 from Visualization.vtkhelper import *
 from Visualization.qt.VTKItemFramebufferRenderer import FbItemRenderer
+from Visualization.VtkNGSolve import gfuActor, gfuActor2
 
 import locale
-
 
 def cloneMouseEvent(event: QMouseEvent):
     return QMouseEvent(
         event.type(),
-        event.localPos(),
-        event.windowPos(),
-        event.screenPos(),
+        event.position(),
+        event.scenePosition(),
+        event.globalPosition(),
         event.button(),
         event.buttons(),
         event.modifiers(),
@@ -59,6 +63,15 @@ def cloneWheelEvent(event: QWheelEvent):
         event.inverted(),
         event.source(),
     )
+
+def convertToMouseEvent(
+    eventType: QEvent.Type,
+    localPos: QPointF,
+    button: Qt.MouseButton,
+    buttons: Qt.MouseButtons,
+    modifiers: Qt.KeyboardModifiers,
+):
+    return QMouseEvent(eventType, localPos, button, buttons, modifiers)
 
 class VTKItem(QQuickFramebufferObject):
     rendererInitialized = Signal()
@@ -141,6 +154,72 @@ class VTKItem(QQuickFramebufferObject):
         event.accept()
         self.update()
 
+    @Slot(float, float, int, int, int)
+    def onMousePressed(
+        self, x: float, y: float, button: int, buttons: int, modifiers: int
+    ):
+        self.lastMouseButtonEvent = convertToMouseEvent(
+            QEvent.MouseButtonPress,
+            QPointF(x, y),
+            Qt.MouseButton(button),
+            Qt.MouseButtons(buttons),
+            Qt.KeyboardModifiers(modifiers),
+        )
+        self.lastMouseButtonEvent.ignore()
+        self.update()
+
+    @Slot(float, float, int, int, int)
+    def onMouseReleased(
+        self, x: float, y: float, button: int, buttons: int, modifiers: int
+    ):
+        self.lastMouseButtonEvent = convertToMouseEvent(
+            QEvent.MouseButtonRelease,
+            QPointF(x, y),
+            Qt.MouseButton(button),
+            Qt.MouseButtons(buttons),
+            Qt.KeyboardModifiers(modifiers),
+        )
+        self.lastMouseButtonEvent.ignore()
+        self.update()
+
+    @Slot(float, float, int, int, int)
+    def onMouseMove(
+        self, x: float, y: float, button: int, buttons: int, modifiers: int
+    ):
+        self.lastMouseMoveEvent = convertToMouseEvent(
+            QEvent.MouseMove,
+            QPointF(x, y),
+            Qt.MouseButton(button),
+            Qt.MouseButtons(buttons),
+            Qt.KeyboardModifiers(modifiers),
+        )
+        self.lastMouseMoveEvent.ignore()
+        self.update()
+
+    @Slot(QPoint, int, int, int, QPoint, float, float)
+    def onMouseWheel(
+        self,
+        angleDelta: QPoint,
+        buttons: int,
+        inverted: int,
+        modifiers: int,
+        pixelDelta: QPoint,
+        x: float,
+        y: float,
+    ):
+        self.lastWheelEvent = QWheelEvent(
+            QPointF(x, y),
+            QPointF(x, y),
+            pixelDelta,
+            angleDelta,
+            Qt.MouseButtons(buttons),
+            Qt.KeyboardModifiers(modifiers),
+            Qt.NoScrollPhase,
+            bool(inverted),
+        )
+        self.lastWheelEvent.ignore()
+        self.update()
+
     def clearAllActors(self):
         actors = self.renderer.renderer.GetActors()
         actors.InitTraversal()
@@ -161,80 +240,27 @@ class VTKItem(QQuickFramebufferObject):
         return self.renderer
 
 
-if __name__ == "__main__":
-    from PySide6.QtWidgets import QApplication
-    from PySide6.QtCore import Qt, QTimer, QCoreApplication
-    from PySide6.QtQml import QQmlApplicationEngine, qmlRegisterType
-    from PySide6.QtQuickControls2 import QQuickStyle
+def defaultFormat(stereo_capable):
+  """ Po prostu skopiowałem to z https://github.com/Kitware/VTK/blob/master/GUISupport/Qt/QVTKRenderWindowAdapter.cxx
+     i działa poprawnie bufor głębokości
+  """
+  fmt = QSurfaceFormat()
+  fmt.setRenderableType(QSurfaceFormat.OpenGL)
+  fmt.setVersion(3, 2)
+  fmt.setProfile(QSurfaceFormat.CoreProfile)
+  fmt.setSwapBehavior(QSurfaceFormat.DoubleBuffer)
+  fmt.setRedBufferSize(8)
+  fmt.setGreenBufferSize(8)
+  fmt.setBlueBufferSize(8)
+  fmt.setDepthBufferSize(8)
+  fmt.setAlphaBufferSize(8)
+  fmt.setStencilBufferSize(0)
+  fmt.setStereo(stereo_capable)
+  fmt.setSamples(0)
 
-    import vtk
-    from Visualization.vtkhelper import *
+  return fmt
 
-    qmlRegisterType(VTKItem, "QmlVtk", 1, 0, "VTKItem")
-    QCoreApplication.setAttribute(Qt.AA_ShareOpenGLContexts)
-    QApplication.setAttribute(Qt.AA_ShareOpenGLContexts)
-    QQuickStyle.setStyle("Material");
-    #sys_argv = sys.argv
-    #sys_argv += ["-style", "Windows"]
-    app = QApplication()
-    engine = QQmlApplicationEngine()
-    engine.load('Visualization/qt/main.qml')
-    toplevel = engine.rootObjects()[0]
-    item = toplevel.findChild(VTKItem, "ConeView")
-
-    def object_created():
-        item = toplevel.findChild(VTKItem, "ConeView")
-        renderer = item.renderer.renderer
-
-        sphere_source = vtk.vtkSphereSource()
-        mapper = vtk.vtkPolyDataMapper()
-        mapper.SetInputConnection(sphere_source.GetOutputPort())
-        actor = vtk.vtkActor()
-        actor.SetMapper(mapper)
-        renderer.AddActor(actor)
-
-        renderer.ResetCamera()
-        item.update()
-    QTimer.singleShot(10, lambda : object_created())
-
-    class MainCtrl(QObject):
-        def __init__(self, engine: QQmlApplicationEngine, item : VTKItem):
-            super().__init__()
-            self.__engine = engine
-            self.__vtkitem = item
-            ctxt = self.__engine.rootContext()
-            self.poly_mesh = None
-            ctxt.setContextProperty("MainCtrl", self)
-            self.mapper =None
-            self.actor = None
-
-        @Slot(str)
-        def loadSurfaceMesh(self, path):
-            url = QUrl(path).toLocalFile()
-
-            # Save the current locale
-            old_locale = locale.getlocale(locale.LC_NUMERIC)
-
-            # Set the LC_NUMERIC category to "C"
-            locale.setlocale(locale.LC_NUMERIC, "C")
-            sv, sf = igl.read_triangle_mesh(url)
-            print("sv, sf : ", len(sv), len(sf))
-            # Restore the old locale
-            locale.setlocale(locale.LC_NUMERIC, old_locale)
-
-            self.poly_mesh = iglToVtkPolydata(sf, sv)
-            self.mapper = vtk.vtkOpenGLPolyDataMapper()
-            self.mapper.SetInputData(self.poly_mesh)
-            self.actor = vtk.vtkActor()
-            self.actor.SetMapper(self.mapper)
-            self.__vtkitem.clearAllActors()
-            self.__vtkitem.renderer.renderer.AddActor(self.actor)
-            self.__vtkitem.renderer.renderer.ResetCamera()
-            self.__vtkitem.update()
-            #print(self.poly_mesh)
-
-
-    mainctrl = MainCtrl(engine, item)
-
-    app.exec()
-
+QSurfaceFormat.setDefaultFormat(defaultFormat(False))
+qmlRegisterType(VTKItem, "QmlVtk", 1, 0, "VTKItem")
+QCoreApplication.setAttribute(Qt.AA_ShareOpenGLContexts)
+QApplication.setAttribute(Qt.AA_ShareOpenGLContexts)

@@ -116,7 +116,10 @@ class FbItemRenderer(QQuickFramebufferObject.Renderer):
     def __processMouseMoveEvent(self, event: QMouseEvent):
         ctrl, shift = self.__getCtrlShift(event)
         self.__setEventInformation(event.position(), ctrl, shift, chr(0), 0, None)
+        mf = self.style.GetMotionFactor()
+        #self.style.SetMotionFactor(3.*mf)
         self.rwi.MouseMoveEvent()
+        #self.style.SetMotionFactor(mf)
 
     def __processWheelEvent(self, event: QWheelEvent):
         ctrl, shift = self.__getCtrlShift(event)

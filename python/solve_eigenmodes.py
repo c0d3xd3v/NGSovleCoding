@@ -12,20 +12,19 @@ import vtk
 
 path      = sys.argv[1]
 mesh      = ngsolve.Mesh(path)
-count     = 10
+count     = 30
 
 ngsolve.SetNumThreads(8)
 with ngsolve.TaskManager():
     solid_fes       = ngsolve.VectorH1(mesh, order=1, complex=True)
     a, b            = build_elasticity_system_on_fes(steel, solid_fes)
-    a, b, pre, kapa = fe_preconditioning(solid_fes, a, b, "local")
+    a, b, pre, kapa = fe_preconditioning(solid_fes, a, b, "h1amg")
     gfu, lams       = solveEigensystem(solid_fes, a, b, count, "lobpcg", pre)
 
 print(gfu)
-#ngsolve.VTKOutput(ma=mesh, coefs=[gfu.MDComponent(6).real], names=["gfu"], filename='test_file', subdivision=0, legacy=True).Do()
 
 actor, polyData  = gfuActor(mesh, gfu, count, 3)
-actor.select_function("eigenmode6")
+actor.select_function("eigenmode19")
 
 appendFilter = vtk.vtkAppendFilter()
 appendFilter.AddInputData(polyData)

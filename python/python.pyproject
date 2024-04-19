@@ -24,21 +24,14 @@
         "inprogress/test_partitioning.py",
         "test_tetwild.py",
         "inprogress/vibroacoustic2d.py",
-        "Visualization/qt/ControlWidget.ui",
         "petsc/petsc_ngs_example.py",
-        "petsc/ngspetsc_eigensolver.py",
         "petsc/ngs_slepc_example.py",
         "inprogress/ipy_mpi.py",
         "Visualization/qt/VTKItem.py",
         "Visualization/qt/VTKItemFramebufferRenderer.py",
-        "Visualization/qt/Test.qml",
         "Visualization/qt/MainPage.qml",
-        "Visualization/qt/RenderSettings.qml",
-        "Visualization/qt/BackButton.qml",
-        "Visualization/qt/RenderSettingsButton.qml",
-        "Visualization/qt/ExportSettings.qml",
-        "Visualization/qt/ExportSettingsButton.qml",
-        "Visualization/qt/FilePanel.qml",
-        "qtquickcontrols2.conf"
+        "qtquickcontrols2.conf",
+        "inprogress/pbr_example.py",
+        "inprogress/matcaps.py"
     ]
 }

@@ -38,7 +38,7 @@ def LOBPCG(mata, matm, pre, num=1, maxit=20, initial=None, printrates=True):
         asmall = InnerProduct (vecs, mata * vecs)
         msmall = InnerProduct (vecs, matm * vecs)
 
-        ev,evec = scipy.linalg.eigh(a=asmall, b=msmall)
+        ev,evec = scipy.linalg.eigh(turbo=True, a=asmall, b=msmall)
         lams = Vector(ev[0:num])
         err = Norm(lams0 - lams)
 
@@ -53,7 +53,7 @@ def LOBPCG(mata, matm, pre, num=1, maxit=20, initial=None, printrates=True):
         vecs[num:2*num] = vecs[0:num]
         vecs[0:num] = uvecs
 
-        if abs(checksum) < 1.e-7:
+        if abs(checksum) < 1.e-3:
             break
 
         lams0 = Vector(lams)

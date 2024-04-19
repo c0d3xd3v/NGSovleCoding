@@ -1,5 +1,5 @@
 import ngsolve
-from ngsolve.la import EigenValues_Preconditioner
+
 
 def fe_preconditioning(fes, a, b, precond):
     # bddc, h1amg, multigrid, local, direct

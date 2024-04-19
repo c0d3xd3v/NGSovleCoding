@@ -1,10 +1,13 @@
 import time
 from mpi4py import MPI
-from ngsolve import *
+#from ngsolve import *
 import ngsolve
 import numpy as np
 from netgen.csg import unit_cube
 from ngsolve.krylovspace import CGSolver
+
+import petsc4py
+import slepc4py
 
 import netgen.csg as csg
 from netgen.meshing import *
@@ -34,7 +37,7 @@ def KrylovSolve(a, f, fes):
     vecmap.N2P(f.vec, psc_f)
 
     ksp = psc.KSP(petsc_options={
-    "ksp_type": "preonly",
+    "ksp_type": "gmres",
     #lu
     #  mkl_pardiso
     #  mkl_cpardiso
@@ -45,19 +48,24 @@ def KrylovSolve(a, f, fes):
     #cholesky
     #  mumps
     #  cholmod
-    "pc_type": "lu",
+    "pc_type": "gamg",
     "pc_factor_mat_solver_type": "mkl_pardiso"
     })
     ksp.create()
     ksp.setOperators(psc_mat)
-    ksp.setTolerances(rtol=1e-8, atol=0, divtol=1e16, max_it=500)
+    ksp.setTolerances(rtol=1e-10, atol=0, divtol=1e16, max_it=500)
     ksp.solve(psc_f, psc_u)
 
-    gfu = GridFunction(fes)
+    gfu = ngsolve.GridFunction(fes)
     vecmap.P2N(psc_u, gfu.vec)
     return gfu
 
 #if __name__ == "__main__":
+
+petsc4py.init()
+slepc4py.init()
+
+
 comm = MPI.COMM_WORLD
 if comm.rank == 0:
     '''
@@ -100,26 +108,26 @@ else:
 
 mesh = ngsolve.Mesh(ngmesh)
 
-Draw(mesh)
+ngsolve.Draw(mesh)
 
 
 omega = 40.
-pulse = CoefficientFunction(5e4*exp(-(40**2)*((x-0.0)*(x-0.0) + (y-0.0)*(y-0.0) + (z-0.15)*(z-0.15))))
-Draw(pulse, mesh, "pulse")
+pulse = ngsolve.CoefficientFunction(5e4*ngsolve.exp(-(40**2)*((ngsolve.x-0.0)*(ngsolve.x-0.0) + (ngsolve.y-0.0)*(ngsolve.y-0.0) + (ngsolve.z-0.15)*(ngsolve.z-0.15))))
+ngsolve.Draw(pulse, mesh, "pulse")
 
 #fes = H1(mesh, order=3, complex=True, dirichlet=".*")
-fes = H1(mesh, order=1, complex=True)
+fes = ngsolve.H1(mesh, order=1, complex=True)
 
 u,v = fes.TnT()
 #a = BilinearForm(grad(u)*grad(v)*dx+u*v*ds).Assemble()
 #f = LinearForm(1*v*dx).Assemble()
 
-a = BilinearForm(fes)
-a += grad(u)*grad(v)*dx - omega**2*u*v*dx
-a += -omega*1j*u*v * ds('outer')
+a = ngsolve.BilinearForm(fes)
+a += ngsolve.grad(u)*ngsolve.grad(v)*ngsolve.dx - omega**2*u*v*ngsolve.dx
+a += -omega*1j*u*v * ngsolve.ds('outer')
 a.Assemble()
 
-f = LinearForm(pulse * v * dx).Assemble();
+f = ngsolve.LinearForm(pulse * v * ngsolve.dx).Assemble();
 
 ngs_cg_start_t = time.time()
 #gfu = NgsSolve(a, f, fes)
@@ -130,7 +138,7 @@ petsc_cg_start_t = time.time()
 gfu = KrylovSolve(a, f, fes)
 petsc_cg_durration = time.time() - petsc_cg_start_t
 
-Draw(gfu)
+ngsolve.Draw(gfu)
 
 print("ngs_cg_durration   : ", ngs_cg_durration)
 print("petsc_cg_durration : ", petsc_cg_durration)

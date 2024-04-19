@@ -1,5 +1,8 @@
+import time
 import random
 import numpy as np
+
+from vtkmodules.util.numpy_support import vtk_to_numpy, numpy_to_vtk
 
 from vtkmodules.vtkRenderingAnnotation import (
     vtkAnnotatedCubeActor,
@@ -134,22 +137,23 @@ def iglToVtkPolydata(sf, sv):
     # Erstellen Sie ein VTK-PolyData-Objekt für die Dreiecke
     triangle_polydata = vtk.vtkPolyData()
 
-    # Erstellen Sie Punkte und Zellen für die Dreiecke
-    points = vtk.vtkPoints()
-    for v in sv:
-        points.InsertNextPoint(v)
+    points_array = numpy_to_vtk(sv, deep=True)
 
-    cells = vtk.vtkCellArray()
-    for T in sf:
-        triangle = vtk.vtkTriangle()
-        triangle.GetPointIds().SetId(0, T[0])
-        triangle.GetPointIds().SetId(1, T[1])
-        triangle.GetPointIds().SetId(2, T[2])
-        cells.InsertNextCell(triangle)
+    _sf = np.array(sf)
+    nbpts = np.full(_sf.shape[0], 3)
+    _sf = np.column_stack((nbpts, _sf))
+
+    triangles_array = numpy_to_vtk(_sf, deep=True, array_type=vtk.VTK_ID_TYPE)
+
+    points = vtk.vtkPoints()
+    points.SetData(points_array)
+
+    cells2 = vtk.vtkCellArray()
+    cells2.SetCells(triangles_array.GetNumberOfTuples(), triangles_array)
 
     # Fügen Sie die Punkte und Zellen zur PolyData hinzu
     triangle_polydata.SetPoints(points)
-    triangle_polydata.SetPolys(cells)
+    triangle_polydata.SetPolys(cells2)
     return triangle_polydata
 
 
@@ -168,17 +172,16 @@ def addRandomCellData(triangle_polydata):
 
 
 def addScalarCellData(triangle_polydata, cell_data, components, name):
-    tgroupping = vtk.vtkFloatArray()
-    tgroupping.SetNumberOfComponents(components)
-    tgroupping.SetName(name)
-
-    n = triangle_polydata.GetNumberOfPoints()
-
     #print("polys     : " + str(triangle_polydata.GetNumberOfPolys()))
     #print("points    : " + str(triangle_polydata.GetNumberOfPoints()))
     #print("cells     : " + str(triangle_polydata.GetNumberOfCells()))
     #print("verts     : " + str(triangle_polydata.GetNumberOfVerts()))
     #print("celldata  : " + str(len(cell_data)))
+    '''
+    tgroupping = vtk.vtkFloatArray()
+    tgroupping.SetNumberOfComponents(components)
+    tgroupping.SetName(name)
+    n = triangle_polydata.GetNumberOfPoints()
 
     for i in range(n):
         if components > 1:
@@ -189,10 +192,13 @@ def addScalarCellData(triangle_polydata, cell_data, components, name):
             tgroupping.InsertNextTuple1(cell_data[i])
         else:
             tgroupping.InsertNextTuple3(cell_data[i][0], cell_data[i][1], cell_data[i][2])
-    
-    if components == 1:
-        triangle_polydata.GetPointData().AddArray(tgroupping)
-    else:
-        triangle_polydata.GetPointData().AddArray(tgroupping)
+
+    triangle_polydata.GetPointData().AddArray(tgroupping)
+    '''
+    t_start = time.time()
+    points_array = numpy_to_vtk(cell_data, deep=True)
+    points_array.SetName(name)
+    triangle_polydata.GetPointData().AddArray(points_array)
+    print("copy time : ", time.time() - t_start)
 
     return triangle_polydata

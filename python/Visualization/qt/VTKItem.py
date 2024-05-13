@@ -11,7 +11,6 @@ from PySide6.QtQuick import QQuickFramebufferObject, QSGSimpleRectNode, QQuickIt
 from PySide6.QtOpenGL import QOpenGLFramebufferObject, QOpenGLFramebufferObjectFormat
 from PySide6.QtQml import qmlRegisterType, QQmlApplicationEngine
 
-from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 from vtkmodules.util.numpy_support import vtk_to_numpy, numpy_to_vtk
 from Visualization.vtkhelper import *
 from Visualization.qt.VTKItemFramebufferRenderer import FbItemRenderer
@@ -107,17 +106,22 @@ class VTKItem(QQuickFramebufferObject):
 
     def object_created(self):
         if self.renderer != None:
-            renderer = self.renderer.renderer
+            renderer:vtk.vtkRenderer = self.renderer.renderer
             self.interactor = self.renderer.rwi
 
-            vtksnowwhite = [0.0, 0.0, 0.0]  # black
-            vtk.vtkNamedColors().GetColorRGB("snow", vtksnowwhite)
-            vtkskyblue = [0.0, 0.0, 0.0]  # black
-            vtk.vtkNamedColors().GetColorRGB("skyblue", vtkskyblue)
-            renderer.SetBackground(vtksnowwhite)
-            renderer.SetBackground2(vtkskyblue)
+            bgcolor = vtk.vtkNamedColors().HTMLColorToRGB("#363737")
+            bgcolor = [bgcolor[0]/255., bgcolor[1]/255., bgcolor[2]/255.]
+            white = vtk.vtkNamedColors().GetColor3d('White')
+            renderer.SetBackground(bgcolor)
+            renderer.SetBackground2(bgcolor)
             renderer.GradientBackgroundOn()
-            renderer.SetGradientMode(vtk.vtkViewport.GradientModes.VTK_GRADIENT_VERTICAL)
+            #path = "/home/kai/Development/github/NGSovleCoding/data/Data/Skyboxes/skybox2/"
+            path = "Visualization/"
+            self.texture = read_equirectangular_file(path + "skybox.jpg")
+            renderer.SetEnvironmentTexture(self.texture, True)
+            renderer.UseSphericalHarmonicsOff()
+            renderer.UseImageBasedLightingOn()
+            #renderer.SetGradientMode(vtk.vtkViewport.GradientModes.VTK_GRADIENT_VERTICAL)
 
             self.om.SetInteractor(self.interactor)
             self.om.EnabledOn()

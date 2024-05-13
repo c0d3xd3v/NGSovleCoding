@@ -1,7 +1,7 @@
 import ngsolve
 from meshing.tools import *
-from elasticity.eigenfrequencies import *
-
+from pde.eigenfrequencies import *
+from pde.petsc_solvers import KrylovSolve
 
 def solveHelmholtz(fes, gfu, roh=0.001): 
     u = fes.TrialFunction()
@@ -17,8 +17,8 @@ def solveHelmholtz(fes, gfu, roh=0.001):
     pre = ngsolve.Preconditioner(a, precond)
     a.Assemble()
 
-    lams = ngsolve.krylovspace.EigenValues_Preconditioner(mat=a.mat, pre=pre)
-    print(lams)
+    #lams = ngsolve.krylovspace.EigenValues_Preconditioner(mat=a.mat, pre=pre)
+    #print(lams)
 
     g = CoefficientFunction((0.))
     # the right hand side
@@ -34,5 +34,6 @@ def solveHelmholtz(fes, gfu, roh=0.001):
     #gfu.vec.data = solver * res
     #gfu.vec.data += ngsolve.solvers.CG(a.mat, res, freedofs=fes.FreeDofs(), tol=1e-9, maxsteps=300000, printrates=True)
     # inverse : sparsecholesky, mumps, umfpack
-    gfu.vec.data += a.mat.Inverse(fes.FreeDofs(), inverse="mumps") * res
+    #gfu.vec.data += a.mat.Inverse(fes.FreeDofs(), inverse="pardiso") * res
+    gfu = KrylovSolve(a, res, fes)
     return gfu

@@ -1,26 +1,39 @@
+from mpi4py import MPI
+import sys
 import ngsolve
 from netgen.stl import *
 from netgen.meshing import *
 
 
-from meshing.AcousticMesh import *
-from elasticity.eigenfrequencies import *
-from acoustic.boundarysourcesolver import *
-from numerics.preconditioning import fe_preconditioning
-from numerics.eigensystemsolver import solveEigensystem
+#from meshing.AcousticMesh import *
+from pde.eigenfrequencies import *
+from pde.boundarysourcesolver import *
+from pde.preconditioning import fe_preconditioning
+from pde.eigensystemsolver import solveEigensystem, solveEigenmodes
 
 ngsolve.MPI_Init()
 
-path = 'mesh-test.vol'
+count = 30
+#comm = MPI_Init()
+comm = MPI.COMM_WORLD
+if comm.rank == 0:
+    path = sys.argv[2]
+    mesh = ngsolve.Mesh(path)
+    ngmesh = mesh.ngmesh
+    ngmesh.Distribute(comm)
+else:
+    ngmesh = netgen.meshing.Mesh.Receive(comm)
+ngsmesh = ngsolve.Mesh(ngmesh)
+
+print(path)
 
 SetVisualization(clipping=True, clipnormal=tuple([0., 0., -1.]))
 
 count = 10
-ngsmesh = ngsolve.Mesh("mesh-test.vol")
-solid_fes = VectorH1(ngsmesh, definedon="solid", order=2, complex=True)
-a, b = build_elasticity_system_on_fes(steel, solid_fes)
-a, b, pre, kapa = fe_preconditioning(solid_fes, a, b, 'h1amg')
-eigenmodes, lams = solveEigensystem(solid_fes, a, b, count, "arnoldi", pre)
+
+ngsolve.SetNumThreads(8)
+with ngsolve.TaskManager():
+    eigenmodes, lams = solveEigenmodes(ngsmesh, steel, 1,"solid", 15, "slepc_gd")
 
 print(lams)
 Draw(eigenmodes)
@@ -32,6 +45,6 @@ g = BoundaryFromVolumeCF(E)
 roh = rohForAir(lams[6])
 print("roh : ", roh)
 gfu = solveAcousticBoundaryValue(air_fes, n, g, roh, ngsmesh.Boundaries("solid|fixed"))
-
+print("done.")
 Draw(gfu)
 

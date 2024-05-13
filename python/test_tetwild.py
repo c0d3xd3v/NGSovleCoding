@@ -16,7 +16,7 @@ file_path, file = os.path.split(path)[0], os.path.split(path)[1]
 file_name, file_ext = os.path.splitext(file)[0], os.path.splitext(file)[1]
 
 
-wrapper = pytetwild.FTetWildWrapper(stop_energy=10, ideal_edge_length_rel=0.05, eps_rel=0.001)
+wrapper = pytetwild.FTetWildWrapper(stop_energy=50, ideal_edge_length_rel=0.01, eps_rel=0.001)
 sv, sf = igl.read_triangle_mesh(path)
 wrapper.loadMeshGeometry(sv, sf)
 wrapper.tetrahedralize()

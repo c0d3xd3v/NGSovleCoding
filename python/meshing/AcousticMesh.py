@@ -1,7 +1,7 @@
 import sys
 import ngsolve
 from meshing.tools import *
-from elasticity.eigenfrequencies import *
+from pde.eigenfrequencies import *
 
 
 def generateVibroAcousticDomain(solidMesh, maxh):
@@ -9,9 +9,10 @@ def generateVibroAcousticDomain(solidMesh, maxh):
     bndRadius         = meshBoundingRadius(solidMesh, solidMeshCenter)
 
     ambientSphere     = CSGeometry()
-    ambientSphere.Add(Sphere(Pnt(solidMeshCenter), 2.8*bndRadius))
+    ambientSphere.Add(Sphere(Pnt(solidMeshCenter), 2.0*bndRadius))
+    print("generate mesh ... " + str(2.0*bndRadius))
     ambientSphereMesh = ambientSphere.GenerateMesh(maxh=maxh)
-
+    print("done.")
     # create an empty mesh
     mesh = netgen.meshing.Mesh()
 
@@ -38,13 +39,14 @@ def generateVibroAcousticDomain(solidMesh, maxh):
 
     return mesh
 
-if __name__ == "__main__":
-    path = sys.argv[1]
-    solidMesh = ngsolve.Mesh(path).ngmesh
-    solidMesh.SetMaterial(1, "solid")
-    c = 343. #m/s
-    f = 10560. # Hz = 1/s
-    s = c /(10.*f)
-    print("s : ", s)
-    mesh = generateVibroAcousticDomain(solidMesh, maxh=20.0)
-    mesh.Save("mesh-test.vol")
+#if __name__ == "__main__":
+path = sys.argv[1]
+print(path)
+solidMesh = ngsolve.Mesh(path).ngmesh
+solidMesh.SetMaterial(1, "solid")
+c = 343. #m/s
+f = 10560. # Hz = 1/s
+s = c /(10.*f)
+print("s : ", s)
+mesh = generateVibroAcousticDomain(solidMesh, maxh=100.0)
+mesh.Save("mesh-test.vol")

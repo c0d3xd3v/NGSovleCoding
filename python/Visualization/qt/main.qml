@@ -22,7 +22,7 @@ Window {
                 settingsPane.close()
             }
 
-            onPressed: (mouse) => {
+            onPressed: function(mouse) {
                 settingsPane.close()
                 mouse.accepted = true;
                 this.parent.onMousePressed(
@@ -30,12 +30,12 @@ Window {
                     mouse.buttons, mouse.modifiers);
             }
 
-            onPositionChanged: (mouse) => {
+            onPositionChanged: function(mouse) {
                 this.parent.onMouseMove(mouse.x, mouse.y, mouse.button,
                                         mouse.buttons, mouse.modifiers);
             }
 
-            onWheel: (wheel) => {
+            onWheel: function(wheel) {
                 this.parent.onMouseWheel(wheel.angleDelta, wheel.buttons,
                                  wheel.inverted, wheel.modifiers,
                                  wheel.pixelDelta, wheel.x, wheel.y);

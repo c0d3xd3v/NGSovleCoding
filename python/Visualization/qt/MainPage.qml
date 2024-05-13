@@ -1,13 +1,12 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import QtQuick.Dialogs
 
 Item {
     id: item2
     x:10
     y:10
-    width: 200
+    width: 250
     height: 400
     visible: true
     clip: true
@@ -22,7 +21,7 @@ Item {
 
     Component.onCompleted: function() {
         close()
-        MainCtrl.meshLoaded.connect(updateFunctionList)
+        //MainCtrl.meshLoaded.connect(updateFunctionList)
     }
 
     function close(){
@@ -57,7 +56,7 @@ Item {
                 item2.anchors.top = item2.parent.top
                 item2.anchors.left  = item2.parent.left
                 item2.anchors.bottom  = item2.parent.bottom
-                 item2.anchors.bottomMargin = 10
+                item2.anchors.bottomMargin = 10
                 item2.anchors.topMargin = 10
                 item2.anchors.leftMargin = 10
             }
@@ -157,73 +156,34 @@ Item {
                 columnSpacing: 5
                 columns: 1
 
-                Switch {
-                    id: checkBox1
-                    opacity: 0.789
-                    text: qsTr("show triangle outline")
-                    display: AbstractButton.TextOnly
-                    Layout.fillWidth: true
-                    Layout.columnSpan: 1
-                    onCheckedChanged: function() {
-                        MainCtrl.toogleWireframe(checked)
-                    }
+                RenderingControl {
+                    id: columnLayout
+                    height: 350
                 }
 
-                Switch {
-                    id: checkBox
-                    opacity: 0.789
-                    text: qsTr("white background")
-                    rotation: 0
+                SolutionControl {
                     Layout.fillWidth: true
-                    Layout.columnSpan: 1
+                    Layout.preferredHeight: 150
                 }
 
-                Switch {
-                    id: checkBox2
-                    opacity: 0.789
-                    text: qsTr("show bounding box")
-                    display: AbstractButton.TextOnly
-                    Layout.columnSpan: 1
+
+                AnimationControls {
+                    id: animationControls
                     Layout.fillWidth: true
+                    height: 150
                 }
 
-                ColumnLayout {
-                    Layout.bottomMargin: 0
-                    Layout.margins: 5
-                    Layout.fillWidth: true
-
-                    Label {
-                        id: label
-                        opacity: 0.789
-                        text: qsTr("Gridfunction")
-                        Layout.bottomMargin: 0
-                        Layout.margins: 5
-                        Layout.fillWidth: true
-                    }
-
-                    ComboBox {
-                        id: comboBox
-                        opacity: 0.789
-                        Layout.fillWidth: true
-                        onCurrentTextChanged: function() {
-                            MainCtrl.selectFunctionByName(currentText)
-                        }
-                    }
-                }
 
                 Item {
                     id: item1
+                    Layout.minimumHeight: 150
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                 }
+
+
             }
         }
 
     }
 }
-
-/*##^##
-Designer {
-    D{i:0}D{i:12;invisible:true}
-}
-##^##*/

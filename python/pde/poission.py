@@ -1,16 +1,14 @@
-import ngsolve
+from ngsolve import *
 from meshing.tools import *
-from elasticity.eigenfrequencies import *
 
-
-def solvePoission(fes, gfu):
+def solvePoission(fes, gfu, g=CF(0.)):
     # define trial- and test-functions
     u = fes.TrialFunction()
     v = fes.TestFunction()
 
     # the right hand side
     f = LinearForm(fes)
-    f += 0. * v * dx
+    f += g * v * dx
     # the bilinear-form 
     a = BilinearForm(fes, symmetric=True)
     a += grad(u)*grad(v)*dx

@@ -202,3 +202,72 @@ def addScalarCellData(triangle_polydata, cell_data, components, name):
     print("copy time : ", time.time() - t_start)
 
     return triangle_polydata
+
+def read_cubemap(cubemap):
+    """
+    Read six images forming a cubemap.
+
+    :param cubemap: The paths to the six cubemap files.
+    :return: The cubemap texture.
+    """
+    cube_map = vtk.vtkTexture()
+    cube_map.CubeMapOn()
+
+    i = 0
+    for fn in cubemap:
+        # Read the images.
+        reader_factory = vtk.vtkImageReader2Factory()
+        img_reader = reader_factory.CreateImageReader2(str(fn))
+        img_reader.SetFileName(str(fn))
+
+        # Each image must be flipped in Y due to canvas
+        #  versus vtk ordering.
+        flip = vtk.vtkImageFlip()
+        flip.SetInputConnection(img_reader.GetOutputPort(0))
+        flip.SetFilteredAxis(1)  # flip y axis
+        cube_map.SetInputConnection(i, flip.GetOutputPort())
+        i += 1
+
+    cube_map.MipmapOn()
+    cube_map.InterpolateOn()
+
+    return cube_map
+
+
+def read_equirectangular_file(fn_path):
+    """
+    Read an equirectangular environment file and convert to a texture.
+
+    :param fn_path: The equirectangular file path.
+    :return: The texture.
+    """
+    texture = vtk.vtkTexture()
+
+    #suffix = fn_path.suffix.lower()
+    #if suffix in ['.jpeg', '.jpg', '.png']:
+    reader_factory = vtk.vtkImageReader2Factory()
+    img_reader = reader_factory.CreateImageReader2(str(fn_path))
+    img_reader.SetFileName(str(fn_path))
+
+    texture.SetInputConnection(img_reader.GetOutputPort(0))
+    '''
+    else:
+        reader = vtk.vtkHDRReader()
+        extensions = reader.GetFileExtensions()
+        # Check the image can be read.
+        if not reader.CanReadFile(str(fn_path)):
+            print('CanReadFile failed for ', fn_path)
+            return None
+        if suffix not in extensions:
+            print('Unable to read this file extension: ', suffix)
+            return None
+        reader.SetFileName(str(fn_path))
+
+        texture.SetColorModeToDirectScalars()
+        texture.SetInputConnection(reader.GetOutputPort())
+    '''
+
+    texture.MipmapOn()
+    texture.InterpolateOn()
+
+    return texture

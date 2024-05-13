@@ -2,7 +2,7 @@ import time
 import numpy as np
 import ngsolve
 from Visualization.vtkhelper import iglToVtkPolydata, addScalarCellData
-from Visualization.VtkModeshapeActor import VtkModeShapeActor
+from Visualization.VtkFEMActor import VtkFEMActor
 
 def gfuActor(mesh, gfu, count, dim=3):
     vertices = []
@@ -50,7 +50,7 @@ def gfuActor(mesh, gfu, count, dim=3):
         name = "eigenmode" + str(mid)
         polyData = addScalarCellData(polyData, eigenmodes[mid], dim, name)
 
-    modeshapeActor = VtkModeShapeActor()
+    modeshapeActor = VtkFEMActor()
     modeshapeActor.setDataset(polyData)
     return modeshapeActor, polyData
 
@@ -76,7 +76,7 @@ def gfuActor2(mesh, gfu, count, dim=3):
 
     if dim == 1:
         E = gfu
-        eigenmode = [ E.real(x) for x in meshpoints ]
+        eigenmode = [E.real(x) for x in meshpoints]
         eigenmodes[0] = eigenmode
     else:
         for k in range(count):
@@ -87,6 +87,6 @@ def gfuActor2(mesh, gfu, count, dim=3):
             print(name + " extract : ", time.time() - time_start)
             polyData = addScalarCellData(polyData, eigenmodes[k], dim, name)
 
-    modeshapeActor = VtkModeShapeActor()
+    modeshapeActor = VtkFEMActor()
     modeshapeActor.setDataset(polyData)
     return modeshapeActor, polyData

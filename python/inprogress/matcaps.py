@@ -31,12 +31,9 @@ print(bounds)
 for i in range(polydata.GetNumberOfPoints()):
     p = polydata.GetPoint(i)
     n = normals.GetTuple3(i)
-    nx = p[0]*0.005
+    nx = n[0]*0.005
     ny = n[1]*0.005
-    #pn1 = perlinNoise.EvaluateFunction(p[0], p[1], p[2])
-    #pn2 = perlinNoise.EvaluateFunction(p[2], p[1], p[0])
     tcoords.InsertNextTuple2(nx, ny)
-    #print(pn1, pn2)
 
 polydata.GetPointData().SetTCoords(tcoords)
 '''

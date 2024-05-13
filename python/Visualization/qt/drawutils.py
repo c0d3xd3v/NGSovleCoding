@@ -1,27 +1,6 @@
-
-def Draw(femActor, periodic_timer=False):
-    import sys
-    from PySide6 import QtCore, QtWidgets
-    from PySide6.QtGui import QIcon, QAction
-    from PySide6.QtWidgets import QToolBar
-    from Visualization.qt.VtkFEMMeshWidget import VtkFEMMeshWidget
-    from qt_material import apply_stylesheet
-    app = QtWidgets.QApplication(sys.argv)
-    frame = QtWidgets.QFrame()
-    vl = QtWidgets.QVBoxLayout()
-    vtkWidget = VtkFEMMeshWidget()
-    vl.addWidget(vtkWidget)
-    frame.setLayout(vl)
-    frame.show()
-    vtkWidget.renderer.AddActor(femActor.actor)
-    vtkWidget.renderer.ResetCamera()
-    timerId = vtkWidget.renderWindowInteractor.CreateRepeatingTimer(500)
-    if periodic_timer: vtkWidget.registerTimerRequestForActor(femActor)
-    vtkWidget.renderWindowInteractor.Start()
-    apply_stylesheet(app, theme='dark_teal.xml')
-    app.exec()
-    qApp.shutdown()
-
+import locale
+import igl
+import vtk
 from PySide6.QtWidgets import QApplication
 from PySide6.QtCore import Qt, Signal, QTimer, QEvent, QObject, Slot, QUrl
 from PySide6.QtQml import qmlRegisterType, QQmlApplicationEngine
@@ -39,6 +18,8 @@ class MainCtrl(QObject):
         self.mapper =None
         self.actor = None
         self.function_names = None
+        self.animationTimer = QTimer()
+        self.animationTimer.timeout.connect(self.animationTimeout)
 
     def setupInternal(self, engine: QQmlApplicationEngine, item : VTKItem):
         self.__engine = engine
@@ -66,7 +47,7 @@ class MainCtrl(QObject):
         self.__vtkitem.renderer.renderer.AddActor(self.actor)
         self.__vtkitem.renderer.renderer.ResetCamera()
         self.__vtkitem.update()
-        meshLoaded.emit()
+        self.meshLoaded.emit()
 
     def loadMeshActor(self, mesh, gfu, nconv):
 
@@ -79,13 +60,15 @@ class MainCtrl(QObject):
             array_name = pointData.GetArrayName(k)
             self.function_names.append(array_name)
 
-        self.actor.select_function("eigenmode0")
+        #self.actor.select_function("eigenmode0")
 
         self.__vtkitem.renderer.renderer.AddActor(self.actor.actor)
         self.__vtkitem.renderer.renderer.ResetCamera()
         self.__vtkitem.update()
 
         self.meshLoaded.emit()
+
+        #self.animationTimer.start(100)
 
     @Slot(result=list)
     def getFunctionNames(self):
@@ -103,6 +86,11 @@ class MainCtrl(QObject):
             self.actor.enableEdges()
         else:
             self.actor.disableEdges()
+        self.__vtkitem.update()
+
+    @Slot()
+    def animationTimeout(self):
+        self.actor.setTimer(1)
         self.__vtkitem.update()
 
 def Draw2(mesh, gfu, nconv, periodic_timer=False):

@@ -1,6 +1,6 @@
 import time
 from mpi4py import MPI
-#from ngsolve import *
+from ngsolve import *
 import ngsolve
 import numpy as np
 from netgen.csg import unit_cube
@@ -20,7 +20,7 @@ import petsc4py.PETSc as psc
 import ngsolve.ngs2petsc as n2p
 
 def NgsSolve(a, f, fes):
-    gfu = GridFunction(fes)
+    gfu = ngsolve.GridFunction(fes)
     inv = CGSolver(a.mat, freedofs=fes.FreeDofs(), printing=False, maxiter=4000, tol=1e-16)
     gfu.vec.data = inv * f.vec
     return gfu
